@@ -7,44 +7,49 @@ rpm -Uhv https://${SATELLITE_URL}/pub/katello-ca-consumer-latest.noarch.rpm
 
 subscription-manager register --org=${SATELLITE_ORG} --activationkey=${SATELLITE_ACTIVATIONKEY}
 
-dnf install httpd nano -y
+touch /etc/sudoers.d/rhel_sudoers
+echo "%rhel ALL=(ALL:ALL) NOPASSWD:ALL" > /etc/sudoers.d/rhel_sudoers
+cp -a /root/.ssh/* /home/rhel/.ssh/.
+chown -R rhel:rhel /home/rhel/.ssh
 
+## ^ from getting started controller
 
+## COMMENT CENTOS 
+# dnf config-manager --disable rhui*,google*
 
-cat <<EOF | tee /var/www/html/index.html
+# sudo bash -c 'cat >/etc/yum.repos.d/centos8-baseos.repo <<EOL
+# [centos8-baseos]
+# name=CentOS 8 Stream BaseOS
+# baseurl=http://mirror.centos.org/centos/8-stream/BaseOS/x86_64/os
+# enabled=1
+# gpgcheck=0
 
+# EOL
+# cat /etc/yum.repos.d/centos8-baseos.repo'
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nothing to See Here</title>
-    <style>
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
-            color: #333;
-        }
-        h1 {
-            font-size: 3em;
-            text-align: center;
-        }
-    </style>
-</head>
-<body>
-    <h1>Nothing to See Here - Not Yet Anyway - Node03</h1>
-</body>
-</html>
+# sudo bash -c 'cat >/etc/yum.repos.d/centos8-appstream.repo <<EOL
+# [centos8-appstream]
+# name=CentOS 8 Stream AppStream
+# baseurl=http://mirror.centos.org/centos/8-stream/AppStream/x86_64/os/
+# enabled=1
+# gpgcheck=0
 
-EOF
+# EOL
+# cat /etc/yum.repos.d/centos8-appstream.repo'
+## END COMMENT CENTOS 
 
-systemctl start httpd
+## clean repo metadata and refresh
+dnf config-manager --disable google*
+dnf clean all
+dnf config-manager --enable rhui-rhel-9-for-x86_64-baseos-rhui-rpms
+dnf config-manager --enable rhui-rhel-9-for-x86_64-appstream-rhui-rpms
+dnf makecache
 
-mkdir /backup
-chmod -R 777 /backup
+#Install a package to build metadata of the repo and not need to wait during labs
+#dnf install -y cups-filesystem
+
+# stop web server
+systemctl stop nginx
+
+# make Dan Walsh weep: https://stopdisablingselinux.com/
+setenforce 0
