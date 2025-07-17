@@ -9,34 +9,106 @@ ansible-galaxy collection install community.general
 ansible-galaxy collection install ansible.windows
 ansible-galaxy collection install microsoft.ad
 
-# # ## setup rhel user
-# touch /etc/sudoers.d/rhel_sudoers
-# echo "%rhel ALL=(ALL:ALL) NOPASSWD:ALL" > /etc/sudoers.d/rhel_sudoers
-# cp -a /root/.ssh/* /home/$USER/.ssh/.
-# chown -R rhel:rhel /home/$USER/.ssh
 
-# Create an inventory file for this environment
-tee /tmp/inventory << EOF
-[nodes]
-node01
-node02
+## setup rhel user
+touch /etc/sudoers.d/rhel_sudoers
+echo "%rhel ALL=(ALL:ALL) NOPASSWD:ALL" > /etc/sudoers.d/rhel_sudoers
+cp -a /root/.ssh/* /home/$USER/.ssh/.
+chown -R rhel:rhel /home/$USER/.ssh
 
-[storage]
-storage01
 
-[all]
-node01
-node02
+## ansible home
+mkdir /home/$USER/ansible
+## ansible-files dir
+mkdir /home/$USER/ansible-files
 
-[all:vars]
-ansible_user = rhel
-ansible_password = ansible123!
-ansible_ssh_common_args='-o StrictHostKeyChecking=no'
-ansible_python_interpreter=/usr/bin/python3
+## ansible.cfg
+echo "[defaults]" > /home/$USER/.ansible.cfg
+echo "inventory = /home/$USER/ansible-files/hosts" >> /home/$USER/.ansible.cfg
+echo "host_key_checking = False" >> /home/$USER/.ansible.cfg
 
-EOF
-# sudo chown rhel:rhel /tmp/inventory
+## chown and chmod all files in rhel user home
+chown -R rhel:rhel /home/$USER/ansible
+chmod 777 /home/$USER/ansible
+#touch /home/rhel/ansible-files/hosts
+chown -R rhel:rhel /home/$USER/ansible-files
 
+## git setup
+git config --global user.email "rhel@example.com"
+git config --global user.name "Red Hat"
+su - $USER -c 'git config --global user.email "rhel@example.com"'
+su - $USER -c 'git config --global user.name "Red Hat"'
+
+
+## set ansible-navigator default settings
+## for the EE to work we need to pass env variables
+## TODO: controller_host doesnt resolve with control and 127.0.0.1
+## is interpreted within the EE
+su - $USER -c 'cat >/home/$USER/ansible-navigator.yml <<EOL
+---
+ansible-navigator:
+  ansible:
+    inventory:
+      entries:
+      - /home/rhel/ansible-files/hosts
+  execution-environment:
+    container-engine: podman
+    container-options:
+      - "--net=host"
+    enabled: true
+    image: registry.redhat.io/ansible-automation-platform-25/ee-supported-rhel9
+    pull:
+      policy: missing
+    environment-variables:
+      pass:
+        - CONTROLLER_USERNAME
+        - CONTROLLER_PASSWORD
+        - CONTROLLER_VERIFY_SSL
+      set:
+        CONTROLLER_HOST: control.${_SANDBOX_ID}.svc.cluster.local
+  logging:
+    level: debug
+  mode: stdout
+  playbook-artifact:
+    save-as: /home/rhel/{playbook_name}-artifact-{time_stamp}.json
+
+EOL
+cat /home/$USER/ansible-navigator.yml'
+
+## copy navigator settings
+su - $USER -c 'cp /home/$USER/ansible-navigator.yml /home/$USER/.ansible-navigator.yml'
+su - $USER -c 'cp /home/$USER/ansible-navigator.yml /home/$USER/ansible-files/ansible-navigator.yml'
+
+
+## set inventory hosts for commandline ansible
+su - $USER -c 'cat >/home/$USER/ansible-files/hosts <<EOL
+[web]
+node1
+node2
+
+[database]
+node3
+
+[controller]
+control
+
+EOL
+cat /home/$USER/ansible-files/hosts'
+## end inventory hosts
+
+## chown and chmod all files in rhel user home
+chown -R rhel:rhel /home/rhel/ansible
+chmod 777 /home/rhel/ansible
+#touch /home/rhel/ansible-files/hosts
+chown -R rhel:rhel /home/rhel/ansible-files
+
+## install ansible-navigator
+dnf install -y python3-pip 
+su - $USER -c 'python3 -m pip install ansible-navigator --user'
+echo 'export PATH=$HOME/.local/bin:$PATH' >> /home/$USER/.profile
+echo 'export PATH=$HOME/.local/bin:$PATH' >> /etc/profile
+
+git clone https://github.com/ansible-tmm/instruqt-controller-101.git /tmp/controller-101-2024
 
 # # # creates a playbook to setup environment
 tee /tmp/setup.yml << EOF
@@ -53,475 +125,625 @@ tee /tmp/setup.yml << EOF
     DOMAIN: "{{ lookup('env', 'DOMAIN') | default('DOMAIN_NOT_FOUND', true) }}"
   tasks:
 
-  - name: (EXECUTION) add App machine credential
-    ansible.controller.credential:
-      name: 'Application Nodes'
-      organization: Default
-      credential_type: Machine
-      controller_host: "https://localhost"
-      controller_username: admin
-      controller_password: ansible123!
-      validate_certs: false
-      inputs:
-        username: rhel
-        password: ansible123!
-
-  - name: (EXECUTION) add Windows machine credential
-    ansible.controller.credential:
-      name: 'Windows Nodes'
-      organization: Default
-      credential_type: Machine
-      controller_host: "https://localhost"
-      controller_username: admin
-      controller_password: ansible123!
-      validate_certs: false
-      inputs:
-        username: Administrator
-        password: Ansible123!
-
-  - name: (EXECUTION) add Arista credential
-    ansible.controller.credential:
-      name: 'Arista Network'
-      organization: Default
-      credential_type: Machine
-      controller_host: "https://localhost"
-      controller_username: admin
-      controller_password: ansible123!
-      validate_certs: false
-      inputs:
-        username: ansible
-        password: ansible
-
-  - name: Add Network EE
-    ansible.controller.execution_environment:
-      name: "Edge_Network_ee"
-      image: quay.io/acme_corp/network-ee
-      controller_host: "https://localhost"
-      controller_username: admin
-      controller_password: ansible123!
-      validate_certs: false
-
-  - name: Add Windows EE
-    ansible.controller.execution_environment:
-      name: "Windows_ee"
-      image: quay.io/acme_corp/windows-ee
-      controller_host: "https://localhost"
-      controller_username: admin
-      controller_password: ansible123!
-      validate_certs: false
-
-  - name: Add RHEL EE
-    ansible.controller.execution_environment:
-      name: "Rhel_ee"
-      image: quay.io/acme_corp/rhel_90_ee
-      controller_host: "https://localhost"
-      controller_username: admin
-      controller_password: ansible123!
-      validate_certs: false
-
-  - name: Add Video platform inventory
-    ansible.controller.inventory:
-      name: "Video Platform Inventory"
-      description: "Nodes used for streaming"
-      organization: "Default"
-      state: present
-      controller_host: "https://localhost"
-      controller_username: admin
-      controller_password: ansible123!
-      validate_certs: false
-
-  - name: Add Streaming Server hosts
-    ansible.controller.host:
-      name: "{{ item }}"
-      description: "Application Nodes"
-      inventory: "Video Platform Inventory"
-      state: present
-      enabled: true
-      controller_host: "https://localhost"
-      controller_username: admin
-      controller_password: ansible123!
-      validate_certs: false
-    loop:
-      - node01
-      - node02
-      - node03
- 
-  - name: Add Streaming server group
-    ansible.controller.group:
-      name: "Streaming_Infrastucture"
-      description: "Streaming Nodes"
-      inventory: "Video Platform Inventory"
-      hosts:
-        - node01
-        - node02
-        - node03
-      variables:
-        ansible_user: rhel
-      controller_host: "https://localhost"
-      controller_username: admin
-      controller_password: ansible123!
-      validate_certs: false
-
-  - name: Add Streaming server group
-    ansible.controller.group:
-      name: "Reporting"
-      description: "Report Servers"
-      inventory: "Video Platform Inventory"
-      hosts:
-        - node03
-      variables:
-        ansible_user: rhel
-      controller_host: "https://localhost"
-      controller_username: admin
-      controller_password: ansible123!
-      validate_certs: false
+    - name: Create an inventory in automation controller
+      ansible.controller.inventory:
+        name: Lab-Inventory
+        organization: Default
+      tags:
+        - solve-inventory 
+        - solve-inventory-all
+        - solve-workflow
+        - solve-all
 
 
-  #   # Network
- 
-  - name: Add Edge Network Devices
-    ansible.controller.inventory:
-      name: "Edge Network"
-      description: "Network for delivery"
-      organization: "Default"
-      state: present
-      controller_host: "https://localhost"
-      controller_username: admin
-      controller_password: ansible123!
-      validate_certs: false
+    - name: Add node1 and node2 to Lab-Inventory
+      ansible.controller.host:
+        name: "{{ item }}"
+        inventory: Lab-Inventory
+        state: present
+      loop:
+        - node1
+        - node2
+      tags:
+        - solve-inventory-hosts
+        - solve-inventory-all
+        - solve-workflow
+        - solve-all
+       
 
-  - name: Add CEOS1
-    ansible.controller.host:
-      name: "ceos01"
-      description: "Edge Leaf"
-      inventory: "Edge Network"
-      state: present
-      enabled: true
-      controller_host: "https://localhost"
-      controller_username: admin
-      controller_password: ansible123!
-      validate_certs: false
-      variables:
-        ansible_host: node02
-        ansible_port: 2001
+    - name: Create web group and add node1 and node2 
+      ansible.controller.group:
+        name: web
+        inventory: Lab-Inventory
+        hosts:
+          - node1
+          - node2    
+      tags:
+        - solve-inventory-group
+        - solve-inventory-all
+        - solve-workflow
+        - solve-all
 
-  - name: Add CEOS2
-    ansible.controller.host:
-      name: "ceos02"
-      description: "Edge Leaf"
-      inventory: "Edge Network"
-      state: present
-      enabled: true
-      controller_host: "https://localhost"
-      controller_username: admin
-      controller_password: ansible123!
-      validate_certs: false
-      variables:
-        ansible_host: node02
-        ansible_port: 2002
+    - name: Create machine Credentials for the lab
+      ansible.controller.credential:
+        name: lab-credentials
+        credential_type: Machine
+        organization: Default
+        inputs:
+          username: rhel 
+          ssh_key_data: "{{ lookup('file', '/home/rhel/.ssh/id_rsa' ) }}"
+      tags:
+        - solve-credentials
+        - solve-workflow
+        - solve-all
 
-  - name: Add CEOS3
-    ansible.controller.host:
-      name: "ceos03"
-      description: "Edge Leaf"
-      inventory: "Edge Network"
-      state: present
-      enabled: true
-      controller_host: "https://localhost"
-      controller_username: admin
-      controller_password: ansible123!
-      validate_certs: false
-      variables:
-        ansible_host: node02
-        ansible_port: 2003
 
-  - name: Add EOS Network Group
-    ansible.controller.group:
-      name: "Delivery_Network"
-      description: "EOS Network"
-      inventory: "Edge Network"
-      hosts:
-        - ceos01
-        - ceos02
-        - ceos03
-      variables:
-        ansible_user: ansible
-        ansible_connection: ansible.netcommon.network_cli 
-        ansible_network_os: arista.eos.eos 
-        ansible_password: ansible 
-        ansible_become: yes 
-        ansible_become_method: enable
-      controller_host: "https://localhost"
-      controller_username: admin
-      controller_password: ansible123!
-      validate_certs: false
-      
-  #   ## Extra Inventories 
+    - name: Create your first apache playbooks Project from git
+      ansible.controller.project:
+        name: "Apache playbooks"
+        organization: Default
+        state: present
+        scm_type: git
+        scm_url: https://github.com/ansible-tmm/instruqt-wyfp.git
+      tags:
+        - solve-project
+        - solve-workflow
+        - solve-all
 
-  # - name: Add Storage Infrastructure
-  #   ansible.controller.inventory:
-  #    name: "Cache Storage"
-  #    description: "Edge NAS Storage"
-  #    organization: "Default"
-  #    state: present
-  #    controller_host: "https://localhost"
-  #    controller_username: admin
-  #    controller_password: ansible123!
-  #    validate_certs: false
+## TODO: verify projects synced before template in case of skip?
+    - name: Launch apache playbooks project sync 
+      ansible.controller.project_update:
+        project: "Apache playbooks"
+        wait: true
+      tags:
+        - solve-project
+        - solve-workflow
+        - solve-all
+  
+    - name: Create install apache Job Template
+      ansible.controller.job_template:
+        name: "Install Apache"
+        organization: Default
+        state: present
+        inventory: Lab-Inventory
+        become_enabled: True
+        playbook: apache.yml
+        project: Apache playbooks 
+        credential: lab-credentials 
+      tags:
+        - solve-job_template 
+        - solve-workflow
+        - solve-all
 
-  # - name: Add Storage Node
-  #   ansible.controller.host:
-  #    name: "Storage01"
-  #    description: "Edge NAS Storage"
-  #    inventory: "Cache Storage"
-  #    state: present
-  #    enabled: true
-  #    controller_host: "https://localhost"
-  #    controller_username: admin
-  #    controller_password: ansible123!
-  #    validate_certs: false
-
-  - name:  Add Windows Inventory
-    ansible.controller.inventory:
-     name: "Windows Directory Servers"
-     description: "AD Infrastructure"
-     organization: "Default"
-     state: present
-     controller_host: "https://localhost"
-     controller_username: admin
-     controller_password: ansible123!
-     validate_certs: false
-
-  - name: Add Windows Inventory Host
-    ansible.controller.host:
-     name: "windows"
-     description: "Directory Servers"
-     inventory: "Windows Directory Servers"
-     state: present
-     enabled: true
-     controller_host: "https://localhost"
-     controller_username: admin
-     controller_password: ansible123!
-     validate_certs: false
-     variables:
-       ansible_host: windows
-
-  - name: Create group with extra vars
-    ansible.controller.group:
-      name: "domain_controllers"
-      inventory: "Windows Directory Servers"
-      hosts:
-        - windows
-      state: present
-      variables:
-        ansible_connection: winrm
-        ansible_port: 5986
-        ansible_winrm_server_cert_validation: ignore
-        ansible_winrm_transport: credssp
-      controller_host: "https://localhost"
-      controller_username: admin
-      controller_password: ansible123!
-      validate_certs: false
+  ## Verify Job Template is launched on skip
+    - name: Launch the Apache Job Template
+      ansible.controller.job_launch:
+        job_template: "Install Apache"
+      register: job_apache
+      tags:
+        - solve-job_template
+        - solve-jt_apache
+        - solve-workflow
+        - solve-all
         
-  - name: (EXECUTION) Add project
-    ansible.controller.project:
-      name: "Roadshow"
-      description: "Roadshow Content"
-      organization: "Default"
-      scm_type: git
-      scm_url: http://gitea:3000/student/aap25-roadshow-content.git       ##ttps://github.com/nmartins0611/aap25-roadshow-content.git
-      state: present
-      controller_host: "https://localhost"
-      controller_username: admin
-      controller_password: ansible123!
-      validate_certs: false
+        
+  
+  ## TODO: review/verify job_launch success ?
 
-  #- name: (DECISIONS) Create an AAP Credential
-  #  ansible.eda.credential:
-  #    name: "AAP"
-  #    description: "To execute jobs from EDA"
-  #    inputs:
-  #      host: "https://control-{{ GUID }}.{{ DOMAIN }}/api/controller/"
-  #      username: "admin"
-  #      password: "ansible123!"
-  #    credential_type_name: "Red Hat Ansible Automation Platform"
-  #    organization_name: Default
-  #    controller_host: https://localhost
-  #    controller_username: admin
-  #    controller_password: ansible123!
-  #    validate_certs: false
+    - name: Create a second Project from git, additional playbooks
+      ansible.controller.project:
+        name: "Additional playbooks"
+        organization: Default
+        state: present
+        scm_type: git
+        scm_url: https://github.com/ansible-tmm/instruqt-wyfp-additional.git
+      tags:
+        - solve-project2
+        - solve-workflow
+        - solve-all
 
-###############TEMPLATES###############
+      
+  ## TODO: verify projects synced before template in case of skip?
+    - name: Launch additional playbooks project sync 
+      ansible.controller.project_update:
+        project: "Additional playbooks"
+        wait: true
+      tags:
+        - solve-project2
+        - solve-workflow
+        - solve-all
+  
 
-  # - name: Add System Report
-  #   ansible.controller.job_template:
-  #     name: "System Report"
-  #     job_type: "run"
-  #     organization: "Default"
-  #     inventory: "Video Platform Inventory"
-  #     project: "Roadshow"
-  #     playbook: "playbooks/section01/server_re[ort].yml"
-  #     execution_environment: "RHEL EE"
-  #     credentials:
-  #       - "Application Nodes"
-  #     state: "present"
-  #     controller_host: "https://localhost"
-  #     controller_username: admin
-  #     controller_password: ansible123!
-  #     validate_certs: false
+    - name: Create set motd Job Template
+      ansible.controller.job_template:
+        name: "Set motd"
+        organization: Default
+        state: present
+        inventory: Lab-Inventory
+        become_enabled: True
+        playbook: motd_facts.yml
+        project: "Additional playbooks" 
+        credential: lab-credentials 
+      tags:
+        - solve-job_template3 #2
+        - solve-workflow
+        - solve-all
 
-  # - name: Add Windows Setup Template
-  #   ansible.controller.job_template:
-  #     name: "Windows Patching Report"
-  #     job_type: "run"
-  #     organization: "Default"
-  #     inventory: "Windows Directory Servers"
-  #     project: "Roadshow"
-  #     playbook: "playbooks/section01/windows_report.yml"
-  #     execution_environment: "Windows_ee"
-  #     credentials:
-  #       - "Windows Nodes"
-  #     state: "present"
-  #     controller_host: "https://localhost"
-  #     controller_username: admin
-  #     controller_password: ansible123!
-  #     validate_certs: false
+  ## Verify Job Template is launched on skip
+    - name: Launch the set motd Job Template
+      ansible.controller.job_launch:
+        job_template: "Set motd"
+      register: job_motd
+      tags:
+        - solve-job_template3 #2
+        - solve-jt_motd
+        - solve-workflow
+        - solve-all
+        
 
-  - name: Add Rhel Report Template
-    ansible.controller.job_template:
-      name: "Application Server Report"
-      job_type: "run"
-      organization: "Default"
-      inventory: "Video Platform Inventory"
-      project: "Roadshow"
-      playbook: "playbooks/section01/rhel_report.yml"
-      execution_environment: "Rhel_ee"
-      credentials:
-        - "Application Nodes"
-      state: "present"
-      survey_enabled: true
-      survey_spec:
-           {
-             "name": "Report Details",
-             "description": "Report components needed",
-             "spec": [
-               {
-    	          "type": "multiplechoice",
-    	          "question_name": "What data are you looking for ?",
-              	"question_description": "Defined data",
-              	"variable": "report_type",
-                "choices": ["All","Storage Usage","User List","OS Versions"],
-                "required": true
-               }
-             ]
-           }
-      controller_host: "https://localhost"
-      controller_username: admin
-      controller_password: ansible123!
-      validate_certs: false
+## Get inventory ready for postgresql in node 3
 
-  - name: Add OSCAP Setup Template
-    ansible.controller.job_template:
-      name: "OpenSCAP Report"
-      job_type: "run"
-      organization: "Default"
-      inventory: "Video Platform Inventory"
-      project: "Roadshow"
-      playbook: "playbooks/section01/rhel_compliance_report.yml"
-      execution_environment: "Rhel_ee"
-      credentials:
-        - "Application Nodes"
-      state: "present"
-      controller_host: "https://localhost"
-      controller_username: admin
-      controller_password: ansible123!
-      validate_certs: false
+    - name: Add node3 to Lab-Inventory
+      ansible.controller.host:
+        name: node3
+        inventory: Lab-Inventory
+        state: present
+      tags:
+        - solve-pre-workflow
+        - solve-node3
+        - solve_job_template2 #3
+        - solve-workflow
+        - solve-all
+        
 
-  - name: Add Windows Update Report Template
-    ansible.controller.job_template:
-      name: "Windows Update Report"
-      job_type: "run"
-      organization: "Default"
-      inventory: "Windows Directory Servers"
-      project: "Roadshow"
-      playbook: "playbooks/section01/windows_update_report.yml"
-      execution_environment: "Windows_ee"
-      credentials:
-        - "Windows Nodes"
-      state: "present"
-      controller_host: "https://localhost"
-      controller_username: admin
-      controller_password: ansible123!
-      validate_certs: false
-
-  - name: Add RHEL Backup
-    ansible.controller.job_template:
-      name: "Server Backup - XFS/RHEL"
-      job_type: "run"
-      organization: "Default"
-      inventory: "Video Platform Inventory"
-      project: "Roadshow"
-      playbook: "playbooks/section01/xfs_backup.yml"
-      execution_environment: "Rhel_ee"
-      credentials:
-        - "Application Nodes"
-      state: "present"
-      controller_host: "https://localhost"
-      controller_username: admin
-      controller_password: ansible123!
-      validate_certs: false
-
-  - name: Add RHEL Backup Check
-    ansible.controller.job_template:
-      name: "Check RHEL Backup"
-      job_type: "run"
-      organization: "Default"
-      inventory: "Video Platform Inventory"
-      project: "Roadshow"
-      playbook: "playbooks/section01/check_backups.yml"
-      execution_environment: "Rhel_ee"
-      credentials:
-        - "Application Nodes"
-      state: "present"
-      controller_host: "https://localhost"
-      controller_username: admin
-      controller_password: ansible123!
-      validate_certs: false
+    - name: Create database group and add node3 
+      ansible.controller.group:
+        name: database
+        inventory: Lab-Inventory
+        hosts:
+          - node3    
+      tags:
+        - solve-pre-workflow
+        - solve-database
+        - solve-job_template2 #3
+        - solve-workflow
+        - solve-all
 
 
-  - name: Add Windows Backup 
-    ansible.controller.job_template:
-      name: "Server Backup - VSS/Windows"
-      job_type: "run"
-      organization: "Default"
-      inventory: "Windows Directory Servers"
-      project: "Roadshow"
-      playbook: "playbooks/section01/vss_windows.yml"
-      execution_environment: "Windows_ee"
-      credentials:
-        - "Windows Nodes"
-      state: "present"
-      controller_host: "https://localhost"
-      controller_username: admin
-      controller_password: ansible123!
-      validate_certs: false
+    - name: Create Extended services Job Template
+      ansible.controller.job_template:
+        name: "Extended services"
+        organization: Default
+        state: present
+        inventory: Lab-Inventory
+        become_enabled: True
+        playbook: extended_services.yml
+        project: "Additional playbooks" 
+        credential: lab-credentials 
+      tags:     
+        - solve-job_template2 #3    
+        - solve-workflow   
+        - solve-all
 
-  - name: Add Windows Backup Check
-    ansible.controller.job_template:
-      name: "Check Windows Backups"
-      job_type: "run"
-      organization: "Default"
-      inventory: "Windows Directory Servers"
-      project: "Roadshow"
-      playbook: "playbooks/section01/check_windowsvss.yml"
-      execution_environment: "Windows_ee"
-      credentials:
-        - "Windows Nodes"
-      state: "present"
-      controller_host: "https://localhost"
-      controller_username: admin
-      controller_password: ansible123!
-      validate_certs: false
+  ## Verify Job Template is launched on skip
+    - name: Launch the Extended services Job Template
+      ansible.controller.job_launch:
+        job_template: "Extended services"
+      register: job_extended
+      tags:
+        - solve-job_template2 #3
+        - solve-jt_extended
+        - solve-workflow
+        - solve-all
+        
+
+
+### survey
+    - name: Create a Job Template with Survey
+      ansible.controller.job_template: 
+        name: "Install Apache with Survey"
+        organization: "Default"
+        state: "present"
+        inventory: "Lab-Inventory"
+        become_enabled: True
+        playbook: "apache_template.yml"
+        project: "Apache playbooks"
+        credential: lab-credentials
+        survey_enabled: yes
+        survey_spec: "{{ lookup('file', 'controller-101-2024/playbooks-apache/files/apache_survey.json') }}"
+      tags:
+          - solve-jt_survey
+          - solve-all
+
+    ## Verify Job Template is launched on skip
+    - name: Launch the Apache Job Template with Survey
+      ansible.controller.job_launch:
+        job_template: "Install Apache with Survey"
+      register: job_apache_survey
+      tags:
+        - solve-jt_survey_launch
+        - solve-all
+        
+### end survey
+
+
+## Before we create our Workflow, we are missing some requirements.
+## Our third job template tries to deploy postgresql into node 3
+## But we have no [database] group or node3 in our Lab-Inventory.
+## Create the group and add node3 to it. 
+## This is a challenge, no instructions!
+
+
+    - name: Create a Workflow Template
+      ansible.controller.workflow_job_template:
+        name: Your first workflow
+        description: Create a Workflow from previous Job Templates
+        organization: Default
+        inventory: Lab-Inventory
+        workflow_nodes:
+          - identifier: apache101
+            unified_job_template:
+              organization:
+                name: Default
+              name: "Install Apache"
+              type: job_template
+            credentials: []
+            related:
+              success_nodes:
+                - identifier: extended201
+                - identifier: motd201
+              failure_nodes: []
+              always_nodes: []
+              credentials: []
+          - identifier: extended201
+            unified_job_template:
+              organization:
+                name: Default
+              name: "Extended services"
+              type: job_template
+            credentials: []
+            related:
+              success_nodes: []
+              failure_nodes: []
+              always_nodes: []
+              credentials: []
+          - identifier: motd201
+            unified_job_template:
+              organization:
+                name: Default
+              name: "Set motd"
+              type: job_template
+            credentials: []
+            related:
+              success_nodes: []
+              failure_nodes: []
+              always_nodes: []
+              credentials: []              
+      tags:
+        - setup-workflow
+        - solve-workflow
+
+
+
+
+#########################################
+####        CHECK MODE
+#########################################
+
+
+    - name: Check inventory 
+      ansible.controller.inventory:
+        name: Lab-Inventory
+        organization: Default
+        kind: ""
+      check_mode: true
+      register: check_inv
+      failed_when: check_inv.changed
+      tags:
+        - check-inventory
+        - check-all
+
+    - name: Check node1 and node2 in Lab-Inventory
+      ansible.controller.host:
+        name: "{{ item }}"
+        inventory: Lab-Inventory
+        state: present
+      loop:
+        - node1
+        - node2
+      check_mode: true
+      register: check_inv_hosts
+      failed_when: check_inv_hosts.changed
+      tags:
+        - check-hosts
+        - check-inv-hosts
+        - check-all
+
+    - name: Check web group and add hosts 
+      ansible.controller.group:
+        name: web
+        inventory: Lab-Inventory
+        hosts:
+          - node1
+          - node2   
+      check_mode: true
+      register: check_inv_group
+      failed_when: check_inv_group.changed
+      tags:
+        - check-group 
+        - check-inv-group
+        - check-all
+
+
+    - name: Check your first Project from git
+      ansible.controller.project:
+        name: "Apache playbooks"
+        organization: Default
+        state: present
+        scm_type: git
+        scm_url: https://github.com/ansible-tmm/instruqt-wyfp.git
+      check_mode: true
+      register: check_proj
+      failed_when: check_proj.changed
+      tags:
+        - check-project
+        - check-all
+      
+
+  ## TODO: verify projects synced before template
+
+    - name: Check Apache Job Template
+      ansible.controller.job_template:
+        name: "Install Apache"
+        organization: Default
+        state: present
+        inventory: Lab-Inventory
+        become_enabled: True
+        playbook: apache.yml
+        project: Apache playbooks 
+        credential: lab-credentials 
+      check_mode: true
+      register: check_jt_apache
+      failed_when: check_jt_apache.changed
+      tags:
+        - check-job_template 
+        - check-all
+        
+
+  ## TODO: review job_launch?
+
+    - name: Check an additional Project from git
+      ansible.controller.project:
+        name: "Additional playbooks"
+        organization: Default
+        state: present
+        scm_type: git
+        scm_url: https://github.com/ansible-tmm/instruqt-wyfp-additional.git
+      check_mode: true
+      register: check_proj2
+      failed_when: check_proj2.changed
+      tags:
+        - check-project2
+        - check-all
+
+  ## TODO: verify projects synced before template
+  #  - name: Launch  project sync 
+  #    project_update:
+  #      project: "Additional playbooks"
+  #      wait: true
+  #
+
+    - name: Check a motd Job Template
+      ansible.controller.job_template:
+        name: "Set motd"
+        organization: Default
+        state: present
+        inventory: Lab-Inventory
+        become_enabled: True
+        playbook: motd_facts.yml
+        project: "Additional playbooks" 
+        credential: lab-credentials 
+      check_mode: true
+      register: check_jt_motd
+      failed_when: check_jt_motd.changed
+      tags:
+        - check-job_template3  
+        - check-all
+
+    - name: Check extended services Job Template
+      ansible.controller.job_template:
+        name: "Extended services"
+        organization: Default
+        state: present
+        inventory: Lab-Inventory
+        become_enabled: True
+        playbook: extended_services.yml
+        project: "Additional playbooks" 
+        credential: lab-credentials 
+      check_mode: true
+      register: check_jt_ext
+      failed_when: check_jt_ext.changed
+      tags:
+        - check-job_template2         
+        - check-all
+
+
+    - name: Check node3 to Lab-Inventory
+      ansible.controller.host:
+        name: node3
+        inventory: Lab-Inventory
+        state: present
+      check_mode: true
+      register: check_inv_host3
+      failed_when: check_inv_host3.changed
+      tags:
+        - check-pre-workflow
+        - check-node3
+        - check-all
+
+    - name: Check database group and add host
+      ansible.controller.group:
+        name: database
+        inventory: Lab-Inventory
+        hosts:
+          - node3    
+      check_mode: true
+      register: check_inv_grp_db
+      failed_when: check_inv_grp_db.changed
+      tags:
+        - check-pre-workflow
+        - check-database
+        - check-all
+
+
+    - name: Check a Workflow Template
+      ansible.controller.workflow_job_template:
+        name: "Your first workflow"
+        description: Create a Workflow from previous Job Templates
+        organization: Default
+        inventory: Lab-Inventory
+        workflow_nodes:
+          - identifier: apache101
+            unified_job_template:
+              organization:
+                name: Default
+              name: "Install Apache"
+              type: job_template
+            credentials: []
+            related:
+              success_nodes:
+                - identifier: extended201
+                - identifier: motd201
+              failure_nodes: []
+              always_nodes: []
+              credentials: []
+          - identifier: extended201
+            unified_job_template:
+              organization:
+                name: Default
+              name: "Extended services"
+              type: job_template
+            credentials: []
+            related:
+              success_nodes: []
+              failure_nodes: []
+              always_nodes: []
+              credentials: []
+          - identifier: motd201
+            unified_job_template:
+              organization:
+                name: Default
+              name: "Set motd"
+              type: job_template
+            credentials: []
+            related:
+              success_nodes: []
+              failure_nodes: []
+              always_nodes: []
+              credentials: []   
+      check_mode: true
+      register: check_workflow
+      failed_when: check_workflow.changed
+      tags:
+        - check-workflow-only
+        - check-workflow  
+        - check-all
+
+### survey
+    - name: Check Apache with Survey
+      ansible.controller.job_template: 
+        name: "Install Apache with Survey"
+        organization: "Default"
+        state: "present"
+        inventory: "Lab-Inventory"
+        become_enabled: True
+        playbook: "apache_template.yml"
+        project: "Apache playbooks"
+        credential: lab-credentials
+        survey_enabled: yes
+        survey_spec: "{{ lookup('file', 'controller-101-2024/playbooks-apache/files/apache_survey.json') }}"
+      check_mode: true
+      register: check_survey
+      failed_when: check_survey.changed
+      tags:
+          - check-jt_survey
+          - check-all
+
+      
+    - name: Print jt_survey
+      ansible.builtin.debug:
+        var: check_survey
+        verbosity: 2
+      tags:
+        - check-jt_survey
+
+#########################################
+## execution checks // apache service, package, html
+#########################################
+
+
+## check node1 and node2 individually to register html output?
+    - name: Check that apache is working in node1
+      ansible.builtin.uri:
+        url: http://node1
+        return_content: true
+      register: apache_node1
+      until: apache_node1.status == 200
+      retries: 720 # 720 * 5 seconds = 1hour (60*60/5)
+      delay: 5 # Every 5 seconds
+      failed_when: "'webserver' not in apache_node1.content"
+      tags:
+        - check-apache-uri
+        - check-apache
+
+    - name: Check that apache is working in node2
+      ansible.builtin.uri:
+        url: http://node2
+        return_content: true
+      register: apache_node2
+      until: apache_node2.status == 200
+      retries: 720 # 720 * 5 seconds = 1hour (60*60/5)
+      delay: 5 # Every 5 seconds
+      failed_when: "'webserver' not in apache_node2.content"
+      tags:
+        - check-apache-uri
+        - check-apache
+
+
+
+## TODO: delegate to workaround host, need to move to another playbook/hosts.
+    - name: Check httpd service is started
+      ansible.builtin.service:
+        name: httpd
+        state: started
+        enabled: true
+      delegate_to: "{{ item }}"
+      loop:
+        - node1
+        - node2
+      check_mode: true
+      tags:
+        - check-apache-service
+        - check-apache
+
+    - name: Check the Apache Job Template launches successfully
+      ansible.controller.job_launch:
+        job_template: "Install Apache"
+        wait: true
+        timeout: 120
+      #check_mode: true
+      ignore_errors: true
+      register: job_apache
+      tags:
+        - check-jt_apache
+
+    - name: Verify if the apache job was successful
+      ansible.builtin.assert:
+        that: job_apache.status == 'successful'
+        success_msg: "The job was successful."
+        fail_msg: "The job failed."
+      tags:
+        - check-jt_apache
 
 EOF
 
