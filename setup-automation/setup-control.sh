@@ -747,13 +747,4 @@ tee /tmp/setup.yml << EOF
 
 EOF
 
-# # # chown files
-# sudo chown rhel:rhel /tmp/setup.yml
-# sudo chown rhel:rhel /tmp/inventory
-# sudo chown rhel:rhel /tmp/git-setup.yml
-
-# # # execute above playbook
-
-
-
 ANSIBLE_COLLECTIONS_PATH=/tmp/ansible-automation-platform-containerized-setup-bundle-2.5-9-x86_64/collections/:/root/.ansible/collections/ansible_collections/ ansible-playbook -i /tmp/inventory /tmp/setup.yml
