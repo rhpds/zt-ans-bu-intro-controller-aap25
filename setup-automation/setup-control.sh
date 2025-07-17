@@ -123,6 +123,13 @@ tee /tmp/setup.yml << EOF
   vars:
     GUID: "{{ lookup('env', 'GUID') | default('GUID_NOT_FOUND', true) }}"
     DOMAIN: "{{ lookup('env', 'DOMAIN') | default('DOMAIN_NOT_FOUND', true) }}"
+    inventory_name: Lab-Inventory
+    credentials_name: lab-credentials
+    controller_host: "https://{{ ansible_host }}"
+    controller_username: admin
+    controller_password: ansible123!
+    validate_certs: false
+    
   tasks:
 
     - name: Create an inventory in automation controller
