@@ -111,7 +111,7 @@ echo 'export PATH=$HOME/.local/bin:$PATH' >> /etc/profile
 git clone https://github.com/ansible-tmm/instruqt-controller-101.git /tmp/controller-101-2024
 
 # # # creates a playbook to setup environment
-tee /tmp/setup.yml << EOF
+tee /tmp/setup.yml <<EOF
 ---
 ### Automation Controller setup 
 ###
@@ -136,6 +136,10 @@ tee /tmp/setup.yml << EOF
       ansible.controller.inventory:
         name: Lab-Inventory
         organization: Default
+        controller_host: "https://{{ ansible_host }}"
+        controller_username: admin
+        controller_password: ansible123!
+        validate_certs: false
       tags:
         - solve-inventory 
         - solve-inventory-all
@@ -148,6 +152,10 @@ tee /tmp/setup.yml << EOF
         name: "{{ item }}"
         inventory: Lab-Inventory
         state: present
+        controller_host: "https://{{ ansible_host }}"
+        controller_username: admin
+        controller_password: ansible123!
+        validate_certs: false
       loop:
         - node1
         - node2
