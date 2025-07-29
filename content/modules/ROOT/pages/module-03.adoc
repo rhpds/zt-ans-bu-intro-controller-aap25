@@ -1,192 +1,86 @@
-= Windows Patching Report with Ansible
-:toc:
-:toc-placement: auto
+:doctype: book
 
-== Introduction
+'''
 
-Generating patch reports is a critical operational task for maintaining system security and compliance. When you don't have direct access to Windows systems, Ansible becomes an invaluable tool for gathering patch information and delivering actionable reports to your Windows administration teams.
+slug: controller-101-inventory id: 3r6lsub3iiy6 type: challenge title: 1.1 - Creating an Inventory teaser: Managing hosts and groups the easy way notes:
 
-This lab demonstrates how to use Ansible to scan Windows systems for required patches and generate comprehensive reports that can be easily shared with stakeholders.
+* type: text contents: |-   # Inventories
++
+image::../assets/Oct-16-2024_at_02.39.15-image.png[Oct-16-2024_at_02.39.15-image.png]
++
+An inventory defines the hosts and groups of hosts upon which commands, modules, and tasks in a playbook operate.
 
-=== Lab Environment Setup
+* type: text contents: |-   # Inventories, create new inventory
++
+image::../assets/Oct-16-2024_at_02.39.47-image.png[Oct-16-2024_at_02.39.47-image.png]
++
+In this challenge, we will be creating a new inventory, adding hosts and creating a host group inside the inventory.
+tabs:
 
-==== Access Credentials
+* id: p8ktesjmsej6 title: Automation controller type: service hostname: control path: / port: 443
+* id: 4aezyvjr82gp title: Terminal type: terminal hostname: control difficulty: "" timelimit: 600 enhanced_loading: null -- 🗃️ 1.1 - Inventories ===
 
-[cols="1,1"]
-|===
-| Username | Password
+An inventory is a collection of hosts against which jobs (ex.
+playbooks) may be launched, the same as an Ansible inventory file, it indicates which nodes will be managed by the control machine, in this case the automation controller.
 
-| admin
-| ansible123!
-|===
+*Inventories* may be divided into _groups_ and these groups contain the actual _hosts_.
+The _hosts_ may be sourced manually or dynamically and can be referenced by their *IP addresses* or their *hostnames*.
 
+In automation controller you will be able to run multiple playbooks against these inventories without recreating them.
 
+____
+[!IMPORTANT] The credentials for AAP are:
 
-== Lab Exercise
+* Username: `admin`
+* Password: `ansible123!`
+____
 
-=== Exercise 1: Creating a Windows Update Report
+= ☑️ Task 1 - Creation of the Inventory
 
-We'll create a dynamic patch report using Ansible's templating capabilities and publish it as a web page directly on the Windows host for easy access.
+. On the side navigation bar, click the Automation Execution menu option
+. Now click the *Infrastructure* section to expand it and click on *Inventories*
+. Click on the blue *Create inventory* button
+. Select *Create inventory* from the dropdown
+. Name it `Lab-Inventory` .
+. In the *Organization* dropdown, select `Default`
+. Leave all the other fields as they are.
+. Click *Create inventory*
 
-==== Step 1: Access the Windows Update Template
+= ☑️ Task 2 - Add Hosts to the Lab-Inventory
 
-. Navigate to *Automation Execution* → *Templates*
-. Select the *Windows Update Report* template
+____
+[!NOTE] If you are not in the  *Lab-Inventory*, click on it again to edit it.
+____
 
-Before launching the template, we need to configure a survey to allow users to specify which type of updates they want to scan for.
+. Inside the `Lab-Inventory` you will see a tab bar
+. On the tab bar, click on *Hosts*
+. Click on the blue *Create host* button in the center.
+. In the *Name* text box enter `node1` . Leave all the other fields as they are.
+. Click *Create host*
+. Use the breadcrumb *"< Back to Hosts"* on the tab bar, or click *Hosts* on the sidebar.
+. Repeat the above steps to create a new host, named `node2` in `Lab-Inventory`.
 
-.Windows Update Template
-image::update-template.png[Update Template Interface]
+= ☑️ Task 3 - Create the [web] group in Lab-Inventory
 
-==== Step 2: Configure the Survey
+. On the sidebar, go to *Inventories* and click on  the `Lab-Inventory`
+. On the tab bar of `Lab-Inventory`, click on the  *Groups* tab
+. Click on the *Create group* button to create a new group.
+. Name the group `web` (NOTE: you don't need to input it with the brackets `+[ ...]+` like you would in an inventory file).
+. Click *Create group*
 
-. Navigate to the *Survey* tab
-. Create a new survey question with the following details:
+= ☑️ Task 4 - Add node1 and node2 to the [web] group in Lab-Inventory
 
-===== Survey Configuration:
+. Inside the `web`  group you just created
+. Click on the *Hosts* tab on the top menu
+. Click *Add existing host*.
+A pop up will appear.
+. Tick both `node1` and `node2` then click *Add hosts*.
+. Verify `node1` and `node2` are now added to the `web` group in the *Hosts* tab
 
-* *Question:* `Which update category are you wanting to search for?`
-* *Description:* `Windows Update Category`
-* *Answer variable name:* `update_category`
-* *Answer type:* `Multiple Choice (single select)`
+= ✅ Next Challenge
 
-===== Multiple Choice Options:
+Press the `Check` button below to go to the next challenge once you've completed the task.
 
-Add each of the following options (click the + button after entering each option):
+= 🐛 Encountered an issue?
 
-* Security Updates
-* Critical Updates  
-* Tools
-* Definition Updates
-* Updates
-
-[NOTE]
-====
-To add each multiple choice option, fill in the field and then click the + button to add it to the list.
-====
-
-.Survey Configuration
-image::survey.png[Survey Setup Interface]
-
-==== Step 3: Enable and Save the Survey
-
-. Click *Create survey question* to save your configuration
-. Enable the survey using the toggle at the top of the panel
-
-.Survey Enablement
-image::survey-enable.png[Survey Enable Toggle]
-
-==== Step 4: Execute the Patch Scan
-
-. Launch the template
-. From the survey dropdown, select *Security Updates*
-. Wait for the template execution to complete
-
-The Ansible playbook will connect to the Windows server, scan for available security updates, and generate a comprehensive HTML report.
-
-==== Step 5: Review the Generated Report
-
-. Once the template completes, navigate to the *Windows Report* tab
-. Review the outstanding updates that are needed for the system
-
-The report will display all available security updates, including:
-- Update titles and descriptions
-- Knowledge Base (KB) numbers
-- Installation requirements
-- Download sizes
-
-.Windows Update Report
-image::update-report.png[Windows Update Report Results]
-
-[TIP]
-====
-You can re-run the template with different update categories to generate focused reports for specific types of patches (Critical Updates, Definition Updates, etc.).
-====
-
-=== Exercise 2: Verifying Scheduled Tasks
-
-Let's verify that our previously scheduled backup tasks are running correctly.
-
-==== Step 1: Check Scheduled Job Execution
-
-. Navigate to *Automation Execution* → *Jobs*
-. Observe that your *Server Backup - VSS/Windows* jobs that were scheduled earlier have been running automatically
-
-==== Step 2: Verify VSS Snapshots
-
-. Execute the *Check Windows Backups* template
-. Confirm that VSS snapshots are being created successfully
-
-.VSS Snapshots Verification
-image::vss-snaps.png[VSS Snapshots Status]
-
-This verification confirms that your automated backup strategy is working correctly alongside your new patch reporting capabilities.
-
-== Code Reference
-
-=== Windows Update Report Implementation
-
-Here's the key Ansible code used for generating Windows patch reports:
-
-[source,yaml]
-----
-tasks:
-  - name: Create site directory structure
-    ansible.windows.win_file:
-      path: "{{ report_path }}"
-      state: directory
-
-  - name: Show us the updates
-    debug:
-      msg: "{{ update_category }}"
-
-  - name: Check available updates
-    ansible.windows.win_updates:
-      category_names:
-       - "{{ update_category | default(omit) }}"
-      state: searched
-    register: update_result
-
-  - name: Generate HTML report
-    ansible.windows.win_template:
-      src: templates/win_patch_report.html.j2
-      dest: C:\inetpub\wwwroot\index.html
-      force: true
-    notify: restart_iis
-    vars:
-      updates: "{{ update_result.updates }}"
-
-handlers:
-  - name: restart_iis
-    ansible.windows.win_service:
-      name: W3Svc
-      state: restarted
-      start_mode: auto
-----
-
-=== Key Components Explained
-
-**Update Scanning:**
-- Uses `ansible.windows.win_updates` module in search mode
-- Filters by specified update categories
-- Registers results for report generation
-
-**Report Generation:**
-- Leverages Jinja2 templating for dynamic HTML creation
-- Publishes reports directly to IIS web server
-- Provides accessible, shareable format for stakeholders
-
-**Service Management:**
-- Automatically restarts IIS after report publication
-- Ensures web service availability for report access
-
-== Key Takeaways
-
-Congratulations! You've successfully automated multiple critical IT operations tasks:
-
-* ✅ **Automated Backup Operations**: Implemented XFS backups for Linux and VSS snapshots for Windows
-* ✅ **Infrastructure Data Collection**: Gathered comprehensive system facts and generated dynamic reports
-* ✅ **Security Compliance**: Automated OpenSCAP compliance scanning and reporting
-* ✅ **Patch Management**: Created dynamic Windows update reports with configurable survey options
-* ✅ **Scheduled Automation**: Configured recurring tasks that run without manual intervention
-
+If you have encountered an issue or have noticed something not quite right, please https://github.com/ansible/instruqt/issues/new?labels=controller-101&title=Issue+with+Intro+to+Controller+slug+ID:+controller-101-inventory+AAP25&assignees=leogallego[open an issue].

@@ -1,0 +1,81 @@
+:doctype: book
+
+'''
+
+slug: controller-101-template id: zipmj3fb1g3c type: challenge title: 1.4 - Creating a Job Template teaser: This is how you run a playbook with automation controller!
+notes:
+
+* type: text contents: |+   # Job templates
++
+image::../assets/job-templates-home-with-example-job-template.png[job-templates-home-with-example-job-template.png]
++
+In controller, job templates are a visual representation of the `ansible-playbook` command and all flags you can utilize when executing from the command line.
+
+tabs:
+
+* id: 27clkosuqosy title: Automation controller type: service hostname: control path: / port: 443
+* id: 74w7vegze6ly title: Node1 Web type: service hostname: node1 path: / port: 80 url: http://node1
+* id: c7vasovymu4w title: Node2 Web type: service hostname: node2 path: / port: 80 difficulty: "" timelimit: 600 enhanced_loading: null -- 📑 1.4 - Job Templates ===
+
+In automation controller a *Job Template* is a definition and set of parameters for running an Ansible playbook.
+Job Templates are useful to execute the same job many times while also encouraging the reuse of Ansible content and collaboration between teams.
+
+To create a *Job Template* you need to have a *Project* (a repository or directory) from which to source our _Playbooks_.
+We created our Project in the previous challenge.
+Also note that although a *Project* might contain multiple _Playbooks_, a *Job Template* can only run one of those playbooks.
+For running multiple Playbooks we will explore the *Workflow* feature further ahead in the  laboratory.
+
+____
+[!WARNING] *Do not confuse a Job Template with a Jinja template*.
+Jinja templates are used to create dynamic template files, with variables and facts that will be replaced during runtime.
+This is very useful for configuration files for example.
+If you don't know Jinja, don't worry about it right now, just know that they are different things.
+____
+
+____
+[!IMPORTANT] Reminder that the credentials to login to AAP are:
+
+* Username: `admin`
+* Password: `ansible123!`
+____
+
+= ☑️ Task 1 - Creation of the Job Template
+
+. Click the *Templates* link under the *Automation Execution* section of the sidebar
+. Click the *Create template* dropdown button and select *Create job template*
+. *Name* the Job Template as `Install Apache`
+. For the *Job Type* field, leave the default: `Run`
+. For the *Inventory* field, click and and select `Lab-Inventory` from the dropdown
+. For the *Project* field, click and select `Apache playbooks` from the dropdown
+. For the *Playbook* field, click and you will notice that it's auto populated with all the playbooks available in the *Project* repository we selected.
+Choose the `apache.yml`.
+. For the *Credentials* field,  click and only tick `lab-credentials` from the dropdown.
+You can click outside the dropdown to close.
+No need to click browse right now, but if you do, simply click confirm.
+. Scroll to the bottom and make sure to tick the *Privilege escalation* checkbox.
+. Leave all the other fields the same and click *Create job template*
+
+____
+[!IMPORTANT] Note that the *Credentials* field is not mandatory, but if you don't select the right credentials, the execution will fail.
+____
+
+= ☑️ Task 2 - Launch the new Template
+
+. Click the *Templates* link in the *Automation Execution* section of the sidebar
+. You can launch it from this list, by clicking the *Rocket* icon, or
+. You can click on the `Install Apache` template and then click the *Launch* button at the bottom.
+. Verify the execution was successful
+
+= ☑️ Task 3 - Verify Apache is working in node1 and node2
+
+. In the tab bar at the top left of your screen you will find *Node1 Web* and *Node2 Web* tabs.
+. Click on *Node1 Web*, check the message
+. Click on *Node2 Web*, check the message
+
+= ✅ Next Challenge
+
+Press the `Check` button below to go to the next challenge once you've completed the task.
+
+= 🐛 Encountered an issue?
+
+If you have encountered an issue or have noticed something not quite right, please https://github.com/ansible/instruqt/issues/new?labels=intro-to-controller&title=Issue+with+Intro+to+Controller+slug+ID:+controller-101-template&assignees=leogallego[open an issue].

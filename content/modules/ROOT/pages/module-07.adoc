@@ -1,0 +1,61 @@
+:doctype: book
+
+'''
+
+slug: controller-101-project-additional id: sejf20xdjvlh type: challenge title: 1.5 - Creating a second Project teaser: Importing a second repository into a new project notes:
+
+* type: text contents: |-   # Projects
++
+image::../assets/projects-list-all.png[projects-list-all.png]
++
+You can manage playbooks on your server, or by placing your playbooks into a source code management (SCM) system supported by automation controller, including Git, Subversion, and Red Hat Insights.
+tabs:
+
+* id: llj0zwqhyexx title: Automation controller type: service hostname: control path: / port: 443 difficulty: "" timelimit: 600 enhanced_loading: null -- 💡 1.5 - Projects ===
+
+We already have a *Project* called `Apache playbooks` from a previous challenge, where we can find the `apache.yml` and `test_apache_role.yml`  playbooks.
+
+In this new challenge, we are going to create a second project named `Additional playbooks`, which will include the following playbooks: `extended_services.yml` (installs postfix and postgresql), `motd_facts.yml` (sets a message of the day) and `loop_users.yml` (creates multiple users).
+
+____
+[!IMPORTANT] Reminder that the credentials to login to AAP are:
+
+* Username: `admin`
+* Password: `ansible123!`
+____
+
+= ☑️ Task 1 - Creating the second Project
+
+. Expand the *Automation Execution* section in the sidebar menu
+. Click the *Projects* link in the menu
+. Click the *Create project* button
+. *Name* the Project as `Additional playbooks`
+. For the *Organization* field, select `Default` in the dropdown
+. For the *Source Control Type* dropdown, select *Git*, this will enable new fields below.
+. For the *Source Control URL* field copy & paste the following URL:
++
+----
+ https://github.com/leogallego/instruqt-wyfp-additional.git
+----
+
+. Leave all the other fields the same and click *Create project*
+
+= ☑️ Task 2 - Verify the new Project synced successfully
+
+. After saving, you should be taken to the *Details* of the project we just created
+. The *Last Job Status* should display *Running* in blue, give it a few seconds
+. If it changed to *Success* and is showing in green, the project synced correctly.
+
+As an alternative, to see the status of multiple projects, you can:
+
+. Click the *Projects* link  in the *Automation Execution* section in the sidebar menu
+. Check the *Status* column for the `Additional playbooks` is green and reads *Success*
+. Click the *Success* and review the output of the sync
+
+= ✅ Next Challenge
+
+Press the `Check` button below to go to the next challenge once you've completed the task.
+
+= 🐛 Encountered an issue?
+
+If you have encountered an issue or have noticed something not quite right, please https://github.com/ansible/instruqt/issues/new?labels=intro-to-controller&title=Issue+with+Intro+to+Controller+slug+ID:+controller-101-project-2&assignees=leogallego[open an issue].

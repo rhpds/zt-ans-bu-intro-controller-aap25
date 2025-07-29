@@ -1,0 +1,133 @@
+:doctype: book
+
+'''
+
+slug: controller-101-workflow id: 2skayooaiuee type: challenge title: 1.7 - Creating a Workflow Job Template teaser: 'Connecting all the dots: Link multiple playbooks by conditions' notes:
+
+* type: text contents: |-   # Workflows
++
+image::../assets/wf-templates-home-with-example-wf-template.png[wf-templates-home-with-example-wf-template.png]
++
+A workflow job template links together different resources in a graphical way, this can include multiple playbooks (job templates), project syncs and even other workflows.
+tabs:
+
+* id: l1x1sy1y8n6n title: Automation controller type: service hostname: control path: / port: 443
+* id: cpxezyta22dy title: Terminal type: terminal hostname: control difficulty: "" timelimit: 600 enhanced_loading: null -- 🔗 1.7 - Workflows ===
+
+A *Workflow Job Template* is a series of connected automation tasks (or Playbooks) that are executed in a specific order to achieve a desired outcome.
+Compared to an individual Playbook (or Job Template), a *Job Template* handles straightforward tasks in a single playbook, while a *Workflow job template* is designed to manage more complex automation scenarios involving multiple playbooks (or Job Templates) and decision-making processes.
+
+* Job templates
+* Workflow job templates
+* Project syncs
+* Inventory source syncs
+
+Only *Workflow Job Templates* have the Workflow Visualizer icon (wf-viz-icon) as a shortcut for accessing the workflow editor.
+
+____
+[!WARNING] Remember, do not confuse a *Job Template* with a *Jinja template*, or with *Workflow Job Template*.
+They are 3 separate things.
+____
+
+____
+[!IMPORTANT] Reminder that the credentials to login to AAP are:
+
+* Username: `admin`
+* Password: `ansible123!`
+____
+
+= ☑️ Task 1 - Creating a Workflow Template
+
+. Click the *Automation Execution* dropdown in the sidebar
+. Click the *Templates* link
+. Click the *Create template* dropdown button and select *Create workflow job template*
+. In the *Name* field, input `Your first workflow`.
+. In the *Description* field, input: `Create a Workflow from previous Job Templates`
+. In the *Organization* dropdown, select `Default`
+. In the *Inventory* field, select `Lab-Inventory` from the dropdown
+. Leave everything else the same and click *Create workflow job template*.
+
+= ☑️ Task 2 - Workflow Visualizer
+
+. This will take you to the Workflow Visualizer screen,
+. Click *Add step*, as the new Workflow is empty.
+. You will be presented with the *Add step* sidebar
+. For the *Node Type* field, select `Job Template` (default)
+. For the *Job Template* field, select `Install Apache`  from the dropdown.
+. Leave *Convergence* in `Any`
+. For the *Node alias* field, enter `apache101`, this is a simple label to use instead of the playbook name.
+. Click the *Next* button.
+In the next screen, review everything is correct and click *Finish*
+
+= ☑️ Task 3 - Workflow Visualizer - Adding a condional step
+
+. Click the 3 dots next to the `apache101`  box we created in the previous step
+. Click the *Add step and link*
+. The same sidebar from before will show up to the right, this time with *one extra field*
+. For the *Node Type* field, select `Job Template` (default)
+. For the *Job Template* field, select `Extended services`
+. For the *Status* field, select `Run on sucess` from the dropdown
+. Leave *Convergence* in `Any`
+. For the *Node alias* field, enter `extended201`, this is a simple label to use instead of the playbook name.
+. Click the *Next* button.
+Review everything and click *Finish*.
+
+Congratulations!
+You have created a *Workflow Job Template* consisting of two linked *Job Templates*.
+
+____
+[!NOTE] You can zoom in and out with the mouse wheel.
+____
+
+= ☑️ Task 3 - Workflow Visualizer - Adding a parallel step
+
+____
+[!IMPORTANT] Pay atention to the source step!
+____
+
+Now let's add another step for a 3rd Job Template, but this time, it will run in parallel to the last one.
+
+. Click the 3 dots next to the `apache101`  box we created in the first step.
+. Click the *Add step and link*.
+Note this step will run in parallel to the last one, `extended201`.
+. The same sidebar from before will show up to the right, this time with *one extra field*
+. For the *Node Type* field, select `Job Template` (default)
+. For the *Job Template* field, select `Set motd`
+. For the *Status* field, select `Run on sucess` from the dropdown
+. Leave *Convergence* in `Any`
+. For the *Node alias* field, enter `motd201`, this is a simple label to use instead of the playbook name.
+. Click the *Next* button.
+Review everything and click *Finish*.
+
+= ☑️ Task 4 - Workflow Visualizer - Save!
+
+Now for the final step, we are going to save our Workflow:
+
+. Click the blue *Save* button at the top.
+If you miss this one, you will lose your changes!
+
+= ☑️ Task 5 - Launch the new Workflow
+
+There are 2 ways to launch our newly created Workflow.
+First the easiest while working on the Workflow:
+
+. Within the same *Workflow Visualizer* screen
+. Click the 3 dots right below the name, at the top, and select *Launch workflow* from the dropdown
+. Verify all the jobs executed successfully.
+You will  notice a *Sucess* text next to the Workflow name, as well as a ✅ tick in each job box.
+
+Another option is to go back to the *Templates* list and
+
+. You can launch the Workflow from this list by clicking the 🚀 *Rocket* icon , or
+. You can click on the `Your first workflow`  name and click the *Launch template* button.
+. You will be presented with a smaller Workflow Visualizer that shows the progress of the execution as *Running*
+. Verify all the jobs executed successfully.
+You will  notice a *Sucess* text next to the Workflow name, as well as a ✅ tick in each job box.
+
+= ✅ Next Challenge
+
+Press the `Check` button below to go to the next challenge once you've completed the task.
+
+= 🐛 Encountered an issue?
+
+If you have encountered an issue or have noticed something not quite right, please https://github.com/ansible/instruqt/issues/new?labels=controller-101&title=Issue+with+Intro+to+Controller+slug+ID:+controller-101-workflow+AAP25&assignees=leogallego[open an issue].

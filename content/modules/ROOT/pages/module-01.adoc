@@ -1,165 +1,50 @@
-= Ansible Automation Platform Lab Guide
-:toc:
-:toc-placement: auto
+:doctype: book
 
-== Welcome to the Team!
+'''
 
-Congratulations on joining the team! This lab will introduce you to automation using Ansible Automation Platform. We'll start with read-only tasks that are safe to automate, helping you build confidence before moving to more complex automation scenarios.
+slug: controller-101-intro id: ycsfmtvpjhqs type: challenge title: 0.
+- Workshop tips teaser: Introduction and tips to the laboratory notes:
 
-=== Lab Environment Setup
+* type: text contents: |-   # Welcome to Ansible Automation Platform
++
+Welcome to Ansible Automation Platform interactive labs!
+In this laboratory we will explore the Automation Execution (also known as Automation controller) web-based user interface (web-UI) of Ansible Automation Platform.
++
+Through hands-on exercises we will demonstrate how easy it is to use the web-UI of Ansible Automation Platform to run your playbooks.
++
+We will start exploring the web-UI, create an *Inventory* to manage our servers, import our playbooks into *Projects*, add *Job Templates* to run our playbooks and finally, create a *Workflow* linking a few of those playbooks through success or failure conditions, to create more complex environments.
 
-==== Access Credentials
+* type: text contents: |-   # Automation Platform Overview
++
+image::../assets/Oct-16-2024_at_02.01.47-image.png[Oct-16-2024_at_02.01.47-image.png]
++
+The *Overview*  shows a summary of your hosts, projects and inventories.
+Each of them are a link to the corresponding objects for easy access.
+Right below the resource counts, you will find a Job Activity graph with the executions and below that a card-like summary of the existing Jobs, Projects and Inventories.
++
+We will go through all of this sections in the upcoming challenges, while doing hands-on exercises.
+tabs:
 
-[cols="1,1"]
-|===
-| Username | Password
+* id: sd8jb6eycupg title: Automation controller type: service hostname: control path: / port: 443
+* id: shkrwdndryrq title: Terminal type: terminal hostname: control difficulty: "" timelimit: 600 enhanced_loading: null -- 💡 Laboratory tips before we begin!
+===
 
-| admin
-| ansible123!
-|===
+Before we begin, some basic tips to improve your lab experience:
 
+. The instructions sidebar (where you are reading this) can be resized  by dragging the border or completely collapsed by clicking on the "Hide instructions" button at the top.
+This is useful  in case you need extra space for the main panel depending on your resolution.
+You can try this now!
+. In the instructions sidebar, you will find the different sections or tasks.
+In each chapter or challenge, there will be an introduction to the challenge and the related tasks below.
+The sections can be collapsed and expanded by clicking on them.
+image:../assets/image.png[image.png]
+. When you finish with a challenge (or chapter), you need to click the green *Check* button at the bottom of the instructions to move to the next one.
+This will review the steps.
+If no review is required the button might simply be labeled *Next*.
+. You have the option to *Skip* a challenge or chapter, keep in mind this will auto-solve the exercises or tasks in that challenge.
+. The lab has a 55 minutes limit that can be extended at the end.
+If you need more time, make sure to accept the popup.
+. You will find the credentials to login into AAP in the next challenge
+. To start with the exercises click the green button labeled *Next*  below.
 
-
-== Lab Exercises
-
-=== Exercise 1: Backing up Linux File Systems
-
-Managing backups across multiple Linux servers is a common operational task. Ansible can automate various snapshot mechanisms whether your infrastructure is cloud-based, virtualized, or bare metal.
-
-==== Step 1: Check Current Backup Status
-
-. Navigate to the `aap` tab and login using the credentials above (`admin/ansible123!`)
-. Click on the Menu dropdown icon (hamburger menu)
-. Navigate to *Automation Execution* → *Templates*
-. Launch the template *Check RHEL Backups* by clicking the 🚀 icon
-
-You should see that no backups are currently available.
-
-.Current Backup Status
-image::/backupcheck.png[Backup Check Results]
-
-==== Step 2: Create XFS Backups
-
-Now let's create backups of the XFS file systems on your RHEL servers:
-
-. Navigate back to *Automation Execution* → *Templates*
-. Launch the *Server Backup - XFS/RHEL* template
-. This process will backup your three RHEL nodes using XFS dumps
-
-[NOTE]
-====
-This backup process takes approximately 6-7 minutes. Feel free to proceed with other tasks while it runs - Ansible jobs can run in parallel safely!
-====
-
-.XFS Backup Process
-image::xfsbackup.png[XFS Backup in Progress]
-
-==== Step 3: Verify Backup Creation
-
-Once the backup completes:
-
-. Launch the *Check RHEL Backups* template again
-. Verify that backups are now available on each server
-
-.Backup Verification
-image::afterbackupcheck.png[Backup Check After Creation]
-
-=== Exercise 2: Windows System Snapshots
-
-Windows systems have built-in Volume Shadow Copy Service (VSS) snapshotting capabilities. While your organization may use third-party backup tools, VSS snapshots are essential for database systems as they allow backups without locking active files.
-
-==== Step 1: Create VSS Snapshots
-
-. Navigate to *Automation Execution* → *Templates*
-. Launch the *Server Snapshot - VSS/Windows* template
-
-.Windows VSS Snapshot
-image::vss-snap.png[Windows VSS Snapshot Creation]
-
-==== Step 2: Verify Snapshot Creation
-
-. Navigate to *Automation Execution* → *Templates*
-. Execute the *Check Windows Backups* template
-
-.VSS Snapshot Verification
-image::vss-snap-check.png[VSS Snapshot Check]
-
-Great! The VSS snapshot has been successfully created.
-
-==== Step 3: Schedule Automated Snapshots
-
-To automate recurring snapshots without manual intervention:
-
-. Navigate to *Automation Execution* → *Templates*
-. Select *Server Backup - VSS/Windows*
-. Click on the *Schedules* tab
-. Click *Create schedule*
-
-.Schedule Configuration
-image::win-shed.png[Windows Schedule Setup]
-
-===== Schedule Configuration Details:
-
-* *Schedule Name:* `5 Min Snappy`
-* *Description:* `Automated VSS Snaps`
-* *Start date/time:* Leave as default
-* *Time Zone:* Leave as default
-
-===== Frequency Settings:
-
-. Click *Next*
-. Set *Frequency* to `Minutely`
-. Set *Interval* to `5`
-. Select *Save rule* and click *Next*
-. Skip exceptions (click *Next*)
-. Click *Finish*
-
-.Schedule Details
-image::shed-details.png[Schedule Configuration Details]
-
-Perfect! Your automated snapshot schedule is now configured.
-
-== Code Reference
-
-=== XFS Backup Automation
-
-Here's the key Ansible code used for XFS backups:
-
-[source,yaml]
-----
-tasks:
-  - name: Check if xfsdump is installed
-    ansible.builtin.yum:
-      name: xfsdump
-      state: present
-    when: ansible_facts.os_family == "RedHat"
-
-  - name: Ensure the backup directory exists
-    ansible.builtin.file:
-      path: "{{ backup_file | dirname }}"
-      state: directory
-      mode: '0755'
-
-  - name: Perform xfsdump backup
-    ansible.builtin.command:
-      cmd: >
-        xfsdump -l 0 -L {{ backup_label }}
-        -f {{ backup_file }} {{ xfs_mount_point }}
-    register: backup_result
-    ignore_errors: no
-
-  - name: Verify xfsdump success
-    ansible.builtin.debug:
-      msg: "Backup completed successfully: {{ backup_result.stdout }}"
-----
-
-== Next Steps
-
-You've successfully completed the backup automation exercises! You now have:
-
-* ✅ Automated Linux XFS backups
-* ✅ Windows VSS snapshots
-* ✅ Scheduled recurring snapshots
-* ✅ Verification procedures for both systems
-
-This foundation in read-only automation tasks will help you build confidence for more complex automation scenarios in the future.
+= 🐛 Encountered an issue?

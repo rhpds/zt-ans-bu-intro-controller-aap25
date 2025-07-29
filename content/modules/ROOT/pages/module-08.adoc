@@ -1,0 +1,84 @@
+:doctype: book
+
+'''
+
+slug: controller-101-template-extended id: a47k97ltqnri type: challenge title: 1.6 - Creating a second and third Job Templates teaser: Each Job Template is a playbook, let's create a second one notes:
+
+* type: text contents: |+   # Job templates
++
+image::../assets/job-templates-home-with-example-job-template.png[job-templates-home-with-example-job-template.png]
++
+In controller, job templates are a visual representation of the `ansible-playbook` command and all flags you can utilize when executing from the command line.
+
+tabs:
+
+* id: 0hvktkhlm4mx title: Automation controller type: service hostname: control path: / port: 443 difficulty: "" timelimit: 600 enhanced_loading: null -- 📑 1.6 - Second and third Job Templates ===
+
+Let's use what we learned previously and create a second and third *Job Templates*.
+
+* Our *second Job Template* will be named `Extended services` and use the `extended_services.yml` playbook found in the `Additional playbooks` project.
+This playbook will deploy a PostgreSQL database in `node3` server, which belongs to the `[database]` group of our `Lab-Inventory`.
+* And our *third Job Template* will be named `Set motd` and use the `motd_facts.yml` playbook also found in the `Additional playbooks` project.
+This playbook will set a message of the day only in `node1`.
+
+____
+[!NOTE] Notice how we can use Playbooks from the same Project in different Job Templates.
+____
+
+____
+[!IMPORTANT] Reminder that the credentials to login to AAP are:
+
+* Username: `admin`
+* Password: `ansible123!`
+____
+
+= ☑️ Task 1 - Creation of the "Extended services" Job Template
+
+. Expand the *Automation Execution* menu in the sidebar
+. Click the *Templates* link
+. Click the *Create template* dropdown button and select *Create job template*
+. *Name* the Job Template as `Extended services`
+. For the *Job Type* field, leave the default: *Run*
+. For the *Inventory* field, touch the magnifying glass and select `Lab-Inventory`
+. For the *Project* field, touch the magnifying glass and select `Additional playbooks`
+. For the *Playbook* dropdown field, you will notice that it's auto populated with all the playbooks available in the *Project* repository we selected.
+Choose the `extended_services.yml`.
+. For the *Credentials* field, touch the magnifying glass and select `lab-credentials`
+. Scroll to the bottom and tick the *Privilege escalation* checkbox
+. Leave all the other fields the same and click *Create job template*
+
+____
+[!IMPORTANT] Remember to set the *Credentials* field.
+It's not a mandatory field, but if you don't set the right credentials, Ansible can't connect and the job will fail!
+____
+
+= ☑️ Task 2 - Launch the "Extended services" Job Template
+
+. Expand the *Automation Execution* menu in the sidebar
+. Click the *Templates* link
+. You can launch it from this list by clicking the *Rocket* icon next to each of the Job Templates
+. The execution should have *failed*.
+Why did it fail?
+Read the output message.
+. We are missing the `node3` server and the `[database]` group in our `Lab-Inventory`.
+Create them applying what you learned earlier.
+. Launch the *Job Template* again and verify it succeeds.
+. If you are having trouble with this step, move ahead to the next tasks and at the end use the *Skip* button instead of *Check*
+
+= ☑️ Task 3 - Creation of the "Set motd" Job Template
+
+Use the instructions from the previous task to create the new `Set motd` Job Template and use the `motd_facts.yml` playbook also found in the `Additional playbooks` project.
+
+= ☑️ Task 4 - Launch the "Set motd" Job Template
+
+. Click the *Templates* link in the sidebar again
+. You can launch it from this list, by clicking the *Rocket* icon next to each of the Job Templates
+. Verify the execution was successful
+
+= ✅ Next Challenge
+
+Press the `Check` button below to go to the next challenge once you've completed the task.
+
+= 🐛 Encountered an issue?
+
+If you have encountered an issue or have noticed something not quite right, please https://github.com/ansible/instruqt/issues/new?labels=controller-101&title=controller-101+slug+ID:+controller-101-template-extended&assignees=leogallego[open an issue].
