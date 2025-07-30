@@ -10,111 +10,115 @@ subscription-manager register --org=${SATELLITE_ORG} --activationkey=${SATELLITE
 
 
 # Install collection(s)
-ansible-galaxy collection install community.general
+# ansible-galaxy collection install community.general
 
 
-## setup rhel user
-touch /etc/sudoers.d/rhel_sudoers
-echo "%rhel ALL=(ALL:ALL) NOPASSWD:ALL" > /etc/sudoers.d/rhel_sudoers
-cp -a /root/.ssh/* /home/$USER/.ssh/.
-chown -R rhel:rhel /home/$USER/.ssh
+# # ## setup rhel user
+# touch /etc/sudoers.d/rhel_sudoers
+# echo "%rhel ALL=(ALL:ALL) NOPASSWD:ALL" > /etc/sudoers.d/rhel_sudoers
+# # cp -a /root/.ssh/* /home/$USER/.ssh/.
+# # chown -R rhel:rhel /home/$USER/.ssh
+# export CONTROLLER_USERNAME=admin
+# export CONTROLLER_PASSWORD=ansible123!
+# export CONTROLLER_VERIFY_SSL=false
+
+# ## ansible home
+# mkdir /home/$USER/ansible
+# ## ansible-files dir
+# mkdir /home/$USER/ansible-files
+
+# ## ansible.cfg
+# echo "[defaults]" > /home/$USER/.ansible.cfg
+# echo "inventory = /home/$USER/ansible-files/hosts" >> /home/$USER/.ansible.cfg
+# echo "host_key_checking = False" >> /home/$USER/.ansible.cfg
+
+# ## chown and chmod all files in rhel user home
+# chown -R rhel:rhel /home/$USER/ansible
+# chmod 777 /home/$USER/ansible
+# #touch /home/rhel/ansible-files/hosts
+# chown -R rhel:rhel /home/$USER/ansible-files
+
+# ## git setup
+# git config --global user.email "rhel@example.com"
+# git config --global user.name "Red Hat"
+# su - $USER -c 'git config --global user.email "rhel@example.com"'
+# su - $USER -c 'git config --global user.name "Red Hat"'
 
 
-## ansible home
-mkdir /home/$USER/ansible
-## ansible-files dir
-mkdir /home/$USER/ansible-files
+# ## set ansible-navigator default settings
+# ## for the EE to work we need to pass env variables
+# ## TODO: controller_host doesnt resolve with control and 127.0.0.1
+# ## is interpreted within the EE
+# su - $USER -c 'cat >/home/$USER/ansible-navigator.yml <<EOL
+# ---
+# ansible-navigator:
+#   ansible:
+#     inventory:
+#       entries:
+#       - /home/rhel/ansible-files/hosts
+#   execution-environment:
+#     container-engine: podman
+#     container-options:
+#       - "--net=host"
+#     enabled: true
+#     image: registry.redhat.io/ansible-automation-platform-25/ee-supported-rhel9
+#     pull:
+#       policy: missing
+#     environment-variables:
+#       pass:
+#         - CONTROLLER_USERNAME
+#         - CONTROLLER_PASSWORD
+#         - CONTROLLER_VERIFY_SSL
+#       set:
+#         CONTROLLER_HOST: localhost
+#   logging:
+#     level: debug
+#   mode: stdout
+#   playbook-artifact:
+#     save-as: /home/rhel/{playbook_name}-artifact-{time_stamp}.json
 
-## ansible.cfg
-echo "[defaults]" > /home/$USER/.ansible.cfg
-echo "inventory = /home/$USER/ansible-files/hosts" >> /home/$USER/.ansible.cfg
-echo "host_key_checking = False" >> /home/$USER/.ansible.cfg
+# EOL
+# cat /home/$USER/ansible-navigator.yml'
 
-## chown and chmod all files in rhel user home
-chown -R rhel:rhel /home/$USER/ansible
-chmod 777 /home/$USER/ansible
-#touch /home/rhel/ansible-files/hosts
-chown -R rhel:rhel /home/$USER/ansible-files
-
-## git setup
-git config --global user.email "rhel@example.com"
-git config --global user.name "Red Hat"
-su - $USER -c 'git config --global user.email "rhel@example.com"'
-su - $USER -c 'git config --global user.name "Red Hat"'
-
-
-## set ansible-navigator default settings
-## for the EE to work we need to pass env variables
-## TODO: controller_host doesnt resolve with control and 127.0.0.1
-## is interpreted within the EE
-su - $USER -c 'cat >/home/$USER/ansible-navigator.yml <<EOL
----
-ansible-navigator:
-  ansible:
-    inventory:
-      entries:
-      - /home/rhel/ansible-files/hosts
-  execution-environment:
-    container-engine: podman
-    container-options:
-      - "--net=host"
-    enabled: true
-    image: registry.redhat.io/ansible-automation-platform-25/ee-supported-rhel9
-    pull:
-      policy: missing
-    environment-variables:
-      pass:
-        - CONTROLLER_USERNAME
-        - CONTROLLER_PASSWORD
-        - CONTROLLER_VERIFY_SSL
-      set:
-        CONTROLLER_HOST: control.${_SANDBOX_ID}.svc.cluster.local
-  logging:
-    level: debug
-  mode: stdout
-  playbook-artifact:
-    save-as: /home/rhel/{playbook_name}-artifact-{time_stamp}.json
-
-EOL
-cat /home/$USER/ansible-navigator.yml'
-
-## copy navigator settings
-su - $USER -c 'cp /home/$USER/ansible-navigator.yml /home/$USER/.ansible-navigator.yml'
-su - $USER -c 'cp /home/$USER/ansible-navigator.yml /home/$USER/ansible-files/ansible-navigator.yml'
+# ## copy navigator settings
+# su - $USER -c 'cp /home/$USER/ansible-navigator.yml /home/$USER/.ansible-navigator.yml'
+# su - $USER -c 'cp /home/$USER/ansible-navigator.yml /home/$USER/ansible-files/ansible-navigator.yml'
 
 
-## set inventory hosts for commandline ansible
-su - $USER -c 'cat >/home/$USER/ansible-files/hosts <<EOL
-[web]
-node1
-node2
+# ## set inventory hosts for commandline ansible
+# su - $USER -c 'cat >/home/$USER/ansible-files/hosts <<EOL
+# [web]
+# node1
+# node2
 
-[database]
-node3
+# [database]
+# node3
 
-[controller]
-control
+# [controller]
+# control
 
-EOL
-cat /home/$USER/ansible-files/hosts'
-## end inventory hosts
+# EOL
+# cat /home/$USER/ansible-files/hosts'
+# ## end inventory hosts
 
-## chown and chmod all files in rhel user home
-chown -R rhel:rhel /home/rhel/ansible
-chmod 777 /home/rhel/ansible
-#touch /home/rhel/ansible-files/hosts
-chown -R rhel:rhel /home/rhel/ansible-files
+# ## chown and chmod all files in rhel user home
+# chown -R rhel:rhel /home/rhel/ansible
+# chmod 777 /home/rhel/ansible
+# #touch /home/rhel/ansible-files/hosts
+# chown -R rhel:rhel /home/rhel/ansible-files
 
-## install ansible-navigator
-dnf install -y python3-pip 
-su - $USER -c 'python3 -m pip install ansible-navigator --user'
-echo 'export PATH=$HOME/.local/bin:$PATH' >> /home/$USER/.profile
-echo 'export PATH=$HOME/.local/bin:$PATH' >> /etc/profile
+# ## install ansible-navigator
+# dnf install -y python3-pip 
+# su - $USER -c 'python3 -m pip install ansible-navigator --user'
+# echo 'export PATH=$HOME/.local/bin:$PATH' >> /home/$USER/.profile
+# echo 'export PATH=$HOME/.local/bin:$PATH' >> /etc/profile
 
-git clone https://github.com/ansible-tmm/instruqt-controller-101.git /tmp/controller-101-2024
+# git clone https://github.com/ansible-tmm/instruqt-controller-101.git /tmp/controller-101-2024
 
 # # # creates a playbook to setup environment
-tee /tmp/setup.yml << EOF
+
+cat > /tmp/setup.yml << EOL
+
 ---
 ### Automation Controller setup 
 ###
@@ -149,7 +153,6 @@ tee /tmp/setup.yml << EOF
         - solve-workflow
         - solve-all
 
-
     - name: Add node1 and node2 to Lab-Inventory
       ansible.controller.host:
         name: "{{ item }}"
@@ -167,7 +170,6 @@ tee /tmp/setup.yml << EOF
         - solve-inventory-all
         - solve-workflow
         - solve-all
-       
 
     - name: Create web group and add node1 and node2 
       ansible.controller.group:
@@ -179,6 +181,7 @@ tee /tmp/setup.yml << EOF
         controller_host: "https://localhost"
         controller_username: admin
         controller_password: ansible123!
+        validate_certs: false
       tags:
         - solve-inventory-group
         - solve-inventory-all
@@ -191,6 +194,7 @@ tee /tmp/setup.yml << EOF
         controller_host: "https://localhost"
         controller_username: admin
         controller_password: ansible123!
+        validate_certs: false
         credential_type: Machine
         organization: Default
         inputs:
@@ -201,13 +205,13 @@ tee /tmp/setup.yml << EOF
         - solve-workflow
         - solve-all
 
-
     - name: Create your first apache playbooks Project from git
       ansible.controller.project:
         name: "Apache playbooks"
         controller_host: "https://localhost"
         controller_username: admin
         controller_password: ansible123!
+        validate_certs: false
         organization: Default
         state: present
         scm_type: git
@@ -217,13 +221,13 @@ tee /tmp/setup.yml << EOF
         - solve-workflow
         - solve-all
 
-## TODO: verify projects synced before template in case of skip?
     - name: Launch apache playbooks project sync 
       ansible.controller.project_update:
         project: "Apache playbooks"
         controller_host: "https://localhost"
         controller_username: admin
         controller_password: ansible123!
+        validate_certs: false
         wait: true
       tags:
         - solve-project
@@ -236,10 +240,11 @@ tee /tmp/setup.yml << EOF
         controller_host: "https://localhost"
         controller_username: admin
         controller_password: ansible123!
+        validate_certs: false
         organization: Default
         state: present
         inventory: Lab-Inventory
-        become_enabled: True
+        become_enabled: true
         playbook: apache.yml
         project: Apache playbooks 
         credential: lab-credentials 
@@ -248,23 +253,19 @@ tee /tmp/setup.yml << EOF
         - solve-workflow
         - solve-all
 
-  ## Verify Job Template is launched on skip
     - name: Launch the Apache Job Template
       ansible.controller.job_launch:
         job_template: "Install Apache"
         controller_host: "https://localhost"
         controller_username: admin
         controller_password: ansible123!
+        validate_certs: false
       register: job_apache
       tags:
         - solve-job_template
         - solve-jt_apache
         - solve-workflow
         - solve-all
-        
-        
-  
-  ## TODO: review/verify job_launch success ?
 
     - name: Create a second Project from git, additional playbooks
       ansible.controller.project:
@@ -273,6 +274,7 @@ tee /tmp/setup.yml << EOF
         controller_host: "https://localhost"
         controller_username: admin
         controller_password: ansible123!
+        validate_certs: false
         state: present
         scm_type: git
         scm_url: https://github.com/ansible-tmm/instruqt-wyfp-additional.git
@@ -281,20 +283,18 @@ tee /tmp/setup.yml << EOF
         - solve-workflow
         - solve-all
 
-      
-  ## TODO: verify projects synced before template in case of skip?
     - name: Launch additional playbooks project sync 
       ansible.controller.project_update:
         project: "Additional playbooks"
         controller_host: "https://localhost"
         controller_username: admin
         controller_password: ansible123!
+        validate_certs: false
         wait: true
       tags:
         - solve-project2
         - solve-workflow
         - solve-all
-  
 
     - name: Create set motd Job Template
       ansible.controller.job_template:
@@ -302,34 +302,32 @@ tee /tmp/setup.yml << EOF
         organization: Default
         state: present
         inventory: Lab-Inventory
-        become_enabled: True
+        become_enabled: true
         playbook: motd_facts.yml
         project: "Additional playbooks" 
         credential: lab-credentials 
         controller_host: "https://localhost"
         controller_username: admin
         controller_password: ansible123!
+        validate_certs: false
       tags:
-        - solve-job_template3 #2
+        - solve-job_template3
         - solve-workflow
         - solve-all
 
-  ## Verify Job Template is launched on skip
     - name: Launch the set motd Job Template
       ansible.controller.job_launch:
         job_template: "Set motd"
         controller_host: "https://localhost"
         controller_username: admin
         controller_password: ansible123!
+        validate_certs: false
       register: job_motd
       tags:
-        - solve-job_template3 #2
+        - solve-job_template3
         - solve-jt_motd
         - solve-workflow
         - solve-all
-        
-
-## Get inventory ready for postgresql in node 3
 
     - name: Add node3 to Lab-Inventory
       ansible.controller.host:
@@ -338,14 +336,14 @@ tee /tmp/setup.yml << EOF
         controller_host: "https://localhost"
         controller_username: admin
         controller_password: ansible123!
+        validate_certs: false
         state: present
       tags:
         - solve-pre-workflow
         - solve-node3
-        - solve_job_template2 #3
+        - solve-job_template2
         - solve-workflow
         - solve-all
-        
 
     - name: Create database group and add node3 
       ansible.controller.group:
@@ -356,13 +354,13 @@ tee /tmp/setup.yml << EOF
         controller_host: "https://localhost"
         controller_username: admin
         controller_password: ansible123!
+        validate_certs: false
       tags:
         - solve-pre-workflow
         - solve-database
-        - solve-job_template2 #3
+        - solve-job_template2
         - solve-workflow
         - solve-all
-
 
     - name: Create Extended services Job Template
       ansible.controller.job_template:
@@ -370,75 +368,64 @@ tee /tmp/setup.yml << EOF
         organization: Default
         state: present
         inventory: Lab-Inventory
-        become_enabled: True
+        become_enabled: true
         playbook: extended_services.yml
         project: "Additional playbooks" 
         credential: lab-credentials 
         controller_host: "https://localhost"
         controller_username: admin
         controller_password: ansible123!
+        validate_certs: false
       tags:     
-        - solve-job_template2 #3    
+        - solve-job_template2
         - solve-workflow   
         - solve-all
 
-  ## Verify Job Template is launched on skip
     - name: Launch the Extended services Job Template
       ansible.controller.job_launch:
         job_template: "Extended services"
         controller_host: "https://localhost"
         controller_username: admin
         controller_password: ansible123!
+        validate_certs: false
       register: job_extended
       tags:
-        - solve-job_template2 #3
+        - solve-job_template2
         - solve-jt_extended
         - solve-workflow
         - solve-all
-        
 
-
-### survey
     - name: Create a Job Template with Survey
       ansible.controller.job_template: 
         name: "Install Apache with Survey"
         organization: "Default"
         state: "present"
         inventory: "Lab-Inventory"
-        become_enabled: True
+        become_enabled: true
         playbook: "apache_template.yml"
         project: "Apache playbooks"
         credential: lab-credentials
-        survey_enabled: yes
+        survey_enabled: true
         survey_spec: "{{ lookup('file', 'controller-101-2024/playbooks-apache/files/apache_survey.json') }}"
         controller_host: "https://localhost"
         controller_username: admin
         controller_password: ansible123!
+        validate_certs: false
       tags:
           - solve-jt_survey
           - solve-all
 
-    ## Verify Job Template is launched on skip
     - name: Launch the Apache Job Template with Survey
       ansible.controller.job_launch:
         job_template: "Install Apache with Survey"
         controller_host: "https://localhost"
         controller_username: admin
         controller_password: ansible123!
+        validate_certs: false
       register: job_apache_survey
       tags:
         - solve-jt_survey_launch
         - solve-all
-        
-### end survey
-
-
-## Before we create our Workflow, we are missing some requirements.
-## Our third job template tries to deploy postgresql into node 3
-## But we have no [database] group or node3 in our Lab-Inventory.
-## Create the group and add node3 to it. 
-## This is a challenge, no instructions!
-
 
     - name: Create a Workflow Template
       ansible.controller.workflow_job_template:
@@ -488,17 +475,14 @@ tee /tmp/setup.yml << EOF
         controller_host: "https://localhost"
         controller_username: admin
         controller_password: ansible123!
+        validate_certs: false
       tags:
         - setup-workflow
         - solve-workflow
 
-
-
-
 #########################################
 ####        CHECK MODE
 #########################################
-
 
     - name: Check inventory 
       ansible.controller.inventory:
@@ -507,6 +491,7 @@ tee /tmp/setup.yml << EOF
         controller_host: "https://localhost"
         controller_username: admin
         controller_password: ansible123!
+        validate_certs: false
         kind: ""
       check_mode: true
       register: check_inv
@@ -523,6 +508,7 @@ tee /tmp/setup.yml << EOF
         controller_host: "https://localhost"
         controller_username: admin
         controller_password: ansible123!
+        validate_certs: false
       loop:
         - node1
         - node2
@@ -544,15 +530,14 @@ tee /tmp/setup.yml << EOF
         controller_host: "https://localhost"
         controller_username: admin
         controller_password: ansible123!
+        validate_certs: false
       check_mode: true
       register: check_inv_group
       failed_when: check_inv_group.changed
-      
       tags:
         - check-group 
         - check-inv-group
         - check-all
-
 
     - name: Check your first Project from git
       ansible.controller.project:
@@ -564,15 +549,13 @@ tee /tmp/setup.yml << EOF
         controller_host: "https://localhost"
         controller_username: admin
         controller_password: ansible123!
+        validate_certs: false
       check_mode: true
       register: check_proj
       failed_when: check_proj.changed
       tags:
         - check-project
         - check-all
-      
-
-  ## TODO: verify projects synced before template
 
     - name: Check Apache Job Template
       ansible.controller.job_template:
@@ -580,22 +563,20 @@ tee /tmp/setup.yml << EOF
         organization: Default
         state: present
         inventory: Lab-Inventory
-        become_enabled: True
+        become_enabled: true
         playbook: apache.yml
         project: Apache playbooks 
         credential: lab-credentials 
         controller_host: "https://localhost"
         controller_username: admin
         controller_password: ansible123!
+        validate_certs: false
       check_mode: true
       register: check_jt_apache
       failed_when: check_jt_apache.changed
       tags:
         - check-job_template 
         - check-all
-        
-
-  ## TODO: review job_launch?
 
     - name: Check an additional Project from git
       ansible.controller.project:
@@ -607,6 +588,7 @@ tee /tmp/setup.yml << EOF
         controller_host: "https://localhost"
         controller_username: admin
         controller_password: ansible123!
+        validate_certs: false
       check_mode: true
       register: check_proj2
       failed_when: check_proj2.changed
@@ -614,26 +596,20 @@ tee /tmp/setup.yml << EOF
         - check-project2
         - check-all
 
-  ## TODO: verify projects synced before template
-  #  - name: Launch  project sync 
-  #    project_update:
-  #      project: "Additional playbooks"
-  #      wait: true
-  #
-
     - name: Check a motd Job Template
       ansible.controller.job_template:
         name: "Set motd"
         organization: Default
         state: present
         inventory: Lab-Inventory
-        become_enabled: True
+        become_enabled: true
         playbook: motd_facts.yml
         project: "Additional playbooks" 
         credential: lab-credentials 
         controller_host: "https://localhost"
         controller_username: admin
         controller_password: ansible123!
+        validate_certs: false
       check_mode: true
       register: check_jt_motd
       failed_when: check_jt_motd.changed
@@ -647,20 +623,20 @@ tee /tmp/setup.yml << EOF
         organization: Default
         state: present
         inventory: Lab-Inventory
-        become_enabled: True
+        become_enabled: true
         playbook: extended_services.yml
         project: "Additional playbooks" 
         credential: lab-credentials 
         controller_host: "https://localhost"
         controller_username: admin
         controller_password: ansible123!
+        validate_certs: false
       check_mode: true
       register: check_jt_ext
       failed_when: check_jt_ext.changed
       tags:
         - check-job_template2         
         - check-all
-
 
     - name: Check node3 to Lab-Inventory
       ansible.controller.host:
@@ -670,6 +646,7 @@ tee /tmp/setup.yml << EOF
         controller_host: "https://localhost"
         controller_username: admin
         controller_password: ansible123!
+        validate_certs: false
       check_mode: true
       register: check_inv_host3
       failed_when: check_inv_host3.changed
@@ -687,6 +664,7 @@ tee /tmp/setup.yml << EOF
         controller_host: "https://localhost"
         controller_username: admin
         controller_password: ansible123!
+        validate_certs: false
       check_mode: true
       register: check_inv_grp_db
       failed_when: check_inv_grp_db.changed
@@ -694,7 +672,6 @@ tee /tmp/setup.yml << EOF
         - check-pre-workflow
         - check-database
         - check-all
-
 
     - name: Check a Workflow Template
       ansible.controller.workflow_job_template:
@@ -705,6 +682,7 @@ tee /tmp/setup.yml << EOF
         controller_host: "https://localhost"
         controller_username: admin
         controller_password: ansible123!
+        validate_certs: false
         workflow_nodes:
           - identifier: apache101
             unified_job_template:
@@ -752,29 +730,28 @@ tee /tmp/setup.yml << EOF
         - check-workflow  
         - check-all
 
-### survey
     - name: Check Apache with Survey
       ansible.controller.job_template: 
         name: "Install Apache with Survey"
         organization: "Default"
         state: "present"
         inventory: "Lab-Inventory"
-        become_enabled: True
+        become_enabled: true
         playbook: "apache_template.yml"
         project: "Apache playbooks"
         credential: lab-credentials
-        survey_enabled: yes
+        survey_enabled: true
         survey_spec: "{{ lookup('file', 'controller-101-2024/playbooks-apache/files/apache_survey.json') }}"
         controller_host: "https://localhost"
         controller_username: admin
         controller_password: ansible123!
+        validate_certs: false
       check_mode: true
       register: check_survey
       failed_when: check_survey.changed
       tags:
           - check-jt_survey
           - check-all
-
       
     - name: Print jt_survey
       ansible.builtin.debug:
@@ -787,8 +764,6 @@ tee /tmp/setup.yml << EOF
 ## execution checks // apache service, package, html
 #########################################
 
-
-## check node1 and node2 individually to register html output?
     - name: Check that apache is working in node1
       ansible.builtin.uri:
         url: http://node1
@@ -815,9 +790,6 @@ tee /tmp/setup.yml << EOF
         - check-apache-uri
         - check-apache
 
-
-
-## TODO: delegate to workaround host, need to move to another playbook/hosts.
     - name: Check httpd service is started
       ansible.builtin.service:
         name: httpd
@@ -837,18 +809,18 @@ tee /tmp/setup.yml << EOF
         job_template: "Install Apache"
         wait: true
         timeout: 120
-      #check_mode: true
-      ignore_errors: true
         controller_host: "https://localhost"
         controller_username: admin
         controller_password: ansible123!
-      register: job_apache
+        validate_certs: false
+      ignore_errors: true
+      register: job_apache_check
       tags:
         - check-jt_apache
 
     - name: Verify if the apache job was successful
       ansible.builtin.assert:
-        that: job_apache.status == 'successful'
+        that: job_apache_check.status == 'successful'
         success_msg: "The job was successful."
         fail_msg: "The job failed."
       tags:
