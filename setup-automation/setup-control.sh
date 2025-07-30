@@ -114,7 +114,7 @@ echo 'export PATH=$HOME/.local/bin:$PATH' >> /etc/profile
 git clone https://github.com/ansible-tmm/instruqt-controller-101.git /tmp/controller-101-2024
 
 # # # creates a playbook to setup environment
-tee /tmp/setup.yml <<EOF
+tee /tmp/setup.yml << EOF
 ---
 ### Automation Controller setup 
 ###
@@ -762,7 +762,6 @@ tee /tmp/setup.yml <<EOF
         fail_msg: "The job failed."
       tags:
         - check-jt_apache
-
 EOF
 
 ANSIBLE_COLLECTIONS_PATH=/tmp/ansible-automation-platform-containerized-setup-bundle-2.5-9-x86_64/collections/:/root/.ansible/collections/ansible_collections/ ansible-playbook -i /tmp/inventory /tmp/setup.yml
