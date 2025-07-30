@@ -113,7 +113,6 @@ systemctl disable systemd-tmpfiles-setup.service
 # # # creates a playbook to setup environment
 
 tee /tmp/setup.yml << EOL
-
 ---
 ### Automation Controller setup 
 ###
