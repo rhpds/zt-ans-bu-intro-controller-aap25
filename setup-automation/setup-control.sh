@@ -176,6 +176,9 @@ tee /tmp/setup.yml << EOF
         hosts:
           - node1
           - node2    
+        controller_host: "https://localhost"
+        controller_username: admin
+        controller_password: ansible123!
       tags:
         - solve-inventory-group
         - solve-inventory-all
@@ -185,6 +188,9 @@ tee /tmp/setup.yml << EOF
     - name: Create machine Credentials for the lab
       ansible.controller.credential:
         name: lab-credentials
+        controller_host: "https://localhost"
+        controller_username: admin
+        controller_password: ansible123!
         credential_type: Machine
         organization: Default
         inputs:
@@ -199,6 +205,9 @@ tee /tmp/setup.yml << EOF
     - name: Create your first apache playbooks Project from git
       ansible.controller.project:
         name: "Apache playbooks"
+        controller_host: "https://localhost"
+        controller_username: admin
+        controller_password: ansible123!
         organization: Default
         state: present
         scm_type: git
@@ -212,6 +221,9 @@ tee /tmp/setup.yml << EOF
     - name: Launch apache playbooks project sync 
       ansible.controller.project_update:
         project: "Apache playbooks"
+        controller_host: "https://localhost"
+        controller_username: admin
+        controller_password: ansible123!
         wait: true
       tags:
         - solve-project
@@ -221,6 +233,9 @@ tee /tmp/setup.yml << EOF
     - name: Create install apache Job Template
       ansible.controller.job_template:
         name: "Install Apache"
+        controller_host: "https://localhost"
+        controller_username: admin
+        controller_password: ansible123!
         organization: Default
         state: present
         inventory: Lab-Inventory
@@ -237,6 +252,9 @@ tee /tmp/setup.yml << EOF
     - name: Launch the Apache Job Template
       ansible.controller.job_launch:
         job_template: "Install Apache"
+        controller_host: "https://localhost"
+        controller_username: admin
+        controller_password: ansible123!
       register: job_apache
       tags:
         - solve-job_template
@@ -252,6 +270,9 @@ tee /tmp/setup.yml << EOF
       ansible.controller.project:
         name: "Additional playbooks"
         organization: Default
+        controller_host: "https://localhost"
+        controller_username: admin
+        controller_password: ansible123!
         state: present
         scm_type: git
         scm_url: https://github.com/ansible-tmm/instruqt-wyfp-additional.git
@@ -265,6 +286,9 @@ tee /tmp/setup.yml << EOF
     - name: Launch additional playbooks project sync 
       ansible.controller.project_update:
         project: "Additional playbooks"
+        controller_host: "https://localhost"
+        controller_username: admin
+        controller_password: ansible123!
         wait: true
       tags:
         - solve-project2
@@ -282,6 +306,9 @@ tee /tmp/setup.yml << EOF
         playbook: motd_facts.yml
         project: "Additional playbooks" 
         credential: lab-credentials 
+        controller_host: "https://localhost"
+        controller_username: admin
+        controller_password: ansible123!
       tags:
         - solve-job_template3 #2
         - solve-workflow
@@ -291,6 +318,9 @@ tee /tmp/setup.yml << EOF
     - name: Launch the set motd Job Template
       ansible.controller.job_launch:
         job_template: "Set motd"
+        controller_host: "https://localhost"
+        controller_username: admin
+        controller_password: ansible123!
       register: job_motd
       tags:
         - solve-job_template3 #2
@@ -305,6 +335,9 @@ tee /tmp/setup.yml << EOF
       ansible.controller.host:
         name: node3
         inventory: Lab-Inventory
+        controller_host: "https://localhost"
+        controller_username: admin
+        controller_password: ansible123!
         state: present
       tags:
         - solve-pre-workflow
@@ -320,6 +353,9 @@ tee /tmp/setup.yml << EOF
         inventory: Lab-Inventory
         hosts:
           - node3    
+        controller_host: "https://localhost"
+        controller_username: admin
+        controller_password: ansible123!
       tags:
         - solve-pre-workflow
         - solve-database
@@ -338,6 +374,9 @@ tee /tmp/setup.yml << EOF
         playbook: extended_services.yml
         project: "Additional playbooks" 
         credential: lab-credentials 
+        controller_host: "https://localhost"
+        controller_username: admin
+        controller_password: ansible123!
       tags:     
         - solve-job_template2 #3    
         - solve-workflow   
@@ -347,6 +386,9 @@ tee /tmp/setup.yml << EOF
     - name: Launch the Extended services Job Template
       ansible.controller.job_launch:
         job_template: "Extended services"
+        controller_host: "https://localhost"
+        controller_username: admin
+        controller_password: ansible123!
       register: job_extended
       tags:
         - solve-job_template2 #3
@@ -369,6 +411,9 @@ tee /tmp/setup.yml << EOF
         credential: lab-credentials
         survey_enabled: yes
         survey_spec: "{{ lookup('file', 'controller-101-2024/playbooks-apache/files/apache_survey.json') }}"
+        controller_host: "https://localhost"
+        controller_username: admin
+        controller_password: ansible123!
       tags:
           - solve-jt_survey
           - solve-all
@@ -377,6 +422,9 @@ tee /tmp/setup.yml << EOF
     - name: Launch the Apache Job Template with Survey
       ansible.controller.job_launch:
         job_template: "Install Apache with Survey"
+        controller_host: "https://localhost"
+        controller_username: admin
+        controller_password: ansible123!
       register: job_apache_survey
       tags:
         - solve-jt_survey_launch
@@ -436,7 +484,10 @@ tee /tmp/setup.yml << EOF
               success_nodes: []
               failure_nodes: []
               always_nodes: []
-              credentials: []              
+              credentials: []    
+        controller_host: "https://localhost"
+        controller_username: admin
+        controller_password: ansible123!
       tags:
         - setup-workflow
         - solve-workflow
@@ -453,6 +504,9 @@ tee /tmp/setup.yml << EOF
       ansible.controller.inventory:
         name: Lab-Inventory
         organization: Default
+        controller_host: "https://localhost"
+        controller_username: admin
+        controller_password: ansible123!
         kind: ""
       check_mode: true
       register: check_inv
@@ -466,6 +520,9 @@ tee /tmp/setup.yml << EOF
         name: "{{ item }}"
         inventory: Lab-Inventory
         state: present
+        controller_host: "https://localhost"
+        controller_username: admin
+        controller_password: ansible123!
       loop:
         - node1
         - node2
@@ -484,9 +541,13 @@ tee /tmp/setup.yml << EOF
         hosts:
           - node1
           - node2   
+        controller_host: "https://localhost"
+        controller_username: admin
+        controller_password: ansible123!
       check_mode: true
       register: check_inv_group
       failed_when: check_inv_group.changed
+      
       tags:
         - check-group 
         - check-inv-group
@@ -500,6 +561,9 @@ tee /tmp/setup.yml << EOF
         state: present
         scm_type: git
         scm_url: https://github.com/ansible-tmm/instruqt-wyfp.git
+        controller_host: "https://localhost"
+        controller_username: admin
+        controller_password: ansible123!
       check_mode: true
       register: check_proj
       failed_when: check_proj.changed
@@ -520,6 +584,9 @@ tee /tmp/setup.yml << EOF
         playbook: apache.yml
         project: Apache playbooks 
         credential: lab-credentials 
+        controller_host: "https://localhost"
+        controller_username: admin
+        controller_password: ansible123!
       check_mode: true
       register: check_jt_apache
       failed_when: check_jt_apache.changed
@@ -537,6 +604,9 @@ tee /tmp/setup.yml << EOF
         state: present
         scm_type: git
         scm_url: https://github.com/ansible-tmm/instruqt-wyfp-additional.git
+        controller_host: "https://localhost"
+        controller_username: admin
+        controller_password: ansible123!
       check_mode: true
       register: check_proj2
       failed_when: check_proj2.changed
@@ -561,6 +631,9 @@ tee /tmp/setup.yml << EOF
         playbook: motd_facts.yml
         project: "Additional playbooks" 
         credential: lab-credentials 
+        controller_host: "https://localhost"
+        controller_username: admin
+        controller_password: ansible123!
       check_mode: true
       register: check_jt_motd
       failed_when: check_jt_motd.changed
@@ -578,6 +651,9 @@ tee /tmp/setup.yml << EOF
         playbook: extended_services.yml
         project: "Additional playbooks" 
         credential: lab-credentials 
+        controller_host: "https://localhost"
+        controller_username: admin
+        controller_password: ansible123!
       check_mode: true
       register: check_jt_ext
       failed_when: check_jt_ext.changed
@@ -591,6 +667,9 @@ tee /tmp/setup.yml << EOF
         name: node3
         inventory: Lab-Inventory
         state: present
+        controller_host: "https://localhost"
+        controller_username: admin
+        controller_password: ansible123!
       check_mode: true
       register: check_inv_host3
       failed_when: check_inv_host3.changed
@@ -605,6 +684,9 @@ tee /tmp/setup.yml << EOF
         inventory: Lab-Inventory
         hosts:
           - node3    
+        controller_host: "https://localhost"
+        controller_username: admin
+        controller_password: ansible123!
       check_mode: true
       register: check_inv_grp_db
       failed_when: check_inv_grp_db.changed
@@ -620,6 +702,9 @@ tee /tmp/setup.yml << EOF
         description: Create a Workflow from previous Job Templates
         organization: Default
         inventory: Lab-Inventory
+        controller_host: "https://localhost"
+        controller_username: admin
+        controller_password: ansible123!
         workflow_nodes:
           - identifier: apache101
             unified_job_template:
@@ -680,6 +765,9 @@ tee /tmp/setup.yml << EOF
         credential: lab-credentials
         survey_enabled: yes
         survey_spec: "{{ lookup('file', 'controller-101-2024/playbooks-apache/files/apache_survey.json') }}"
+        controller_host: "https://localhost"
+        controller_username: admin
+        controller_password: ansible123!
       check_mode: true
       register: check_survey
       failed_when: check_survey.changed
@@ -751,6 +839,9 @@ tee /tmp/setup.yml << EOF
         timeout: 120
       #check_mode: true
       ignore_errors: true
+        controller_host: "https://localhost"
+        controller_username: admin
+        controller_password: ansible123!
       register: job_apache
       tags:
         - check-jt_apache
