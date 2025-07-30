@@ -1,13 +1,16 @@
 #!/bin/bash
 
-systemctl stop systemd-tmpfiles-setup.service
-systemctl disable systemd-tmpfiles-setup.service
+curl -k  -L https://${SATELLITE_URL}/pub/katello-server-ca.crt -o /etc/pki/ca-trust/source/anchors/${SATELLITE_URL}.ca.crt
+update-ca-trust
+rpm -Uhv https://${SATELLITE_URL}/pub/katello-ca-consumer-latest.noarch.rpm
+
+subscription-manager register --org=${SATELLITE_ORG} --activationkey=${SATELLITE_ACTIVATIONKEY}
+# systemctl stop systemd-tmpfiles-setup.service
+# systemctl disable systemd-tmpfiles-setup.service
+
 
 # Install collection(s)
-ansible-galaxy collection install ansible.eda
 ansible-galaxy collection install community.general
-ansible-galaxy collection install ansible.windows
-ansible-galaxy collection install microsoft.ad
 
 
 ## setup rhel user
