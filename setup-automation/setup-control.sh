@@ -117,7 +117,7 @@ subscription-manager register --org=${SATELLITE_ORG} --activationkey=${SATELLITE
 
 # # # creates a playbook to setup environment
 
-cat > /tmp/setup.yml << EOL
+tee /tmp/setup.yml << EOL
 
 ---
 ### Automation Controller setup 
@@ -825,6 +825,7 @@ cat > /tmp/setup.yml << EOL
         fail_msg: "The job failed."
       tags:
         - check-jt_apache
+
 EOF
 
 ANSIBLE_COLLECTIONS_PATH=/tmp/ansible-automation-platform-containerized-setup-bundle-2.5-9-x86_64/collections/:/root/.ansible/collections/ansible_collections/ ansible-playbook -i /tmp/inventory /tmp/setup.yml
