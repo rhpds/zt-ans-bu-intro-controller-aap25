@@ -154,7 +154,7 @@ virtualmachines:
         - systemctl reload sshd
 
         
- - name: "node02"
+  - name: "node02"
     image: "rhel-9.5"
     memory: "2G"
     cores: 2
@@ -173,7 +173,7 @@ virtualmachines:
         - echo "PasswordAuthentication yes" > /etc/ssh/sshd_config.d/50-cloud-init.conf
         - systemctl reload sshd
         
- - name: "node03"
+  - name: "node03"
     image: "rhel-9.5"
     memory: "2G"
     cores: 2
@@ -191,5 +191,3 @@ virtualmachines:
       runcmd:
         - echo "PasswordAuthentication yes" > /etc/ssh/sshd_config.d/50-cloud-init.conf
         - systemctl reload sshd
-
-
