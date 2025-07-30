@@ -9,8 +9,8 @@ systemctl disable systemd-tmpfiles-setup.service
 
 
 # # ## setup rhel user
-# touch /etc/sudoers.d/rhel_sudoers
-# echo "%rhel ALL=(ALL:ALL) NOPASSWD:ALL" > /etc/sudoers.d/rhel_sudoers
+touch /etc/sudoers.d/rhel_sudoers
+echo "%rhel ALL=(ALL:ALL) NOPASSWD:ALL" > /etc/sudoers.d/rhel_sudoers
 # # cp -a /root/.ssh/* /home/$USER/.ssh/.
 # # chown -R rhel:rhel /home/$USER/.ssh
 # export CONTROLLER_USERNAME=admin
@@ -18,14 +18,14 @@ systemctl disable systemd-tmpfiles-setup.service
 # export CONTROLLER_VERIFY_SSL=false
 
 # ## ansible home
-# mkdir /home/$USER/ansible
-# ## ansible-files dir
-# mkdir /home/$USER/ansible-files
+mkdir /home/$USER/ansible
+## ansible-files dir
+mkdir /home/$USER/ansible-files
 
 # ## ansible.cfg
-# echo "[defaults]" > /home/$USER/.ansible.cfg
-# echo "inventory = /home/$USER/ansible-files/hosts" >> /home/$USER/.ansible.cfg
-# echo "host_key_checking = False" >> /home/$USER/.ansible.cfg
+echo "[defaults]" > /home/$USER/.ansible.cfg
+echo "inventory = /home/$USER/ansible-files/hosts" >> /home/$USER/.ansible.cfg
+echo "host_key_checking = False" >> /home/$USER/.ansible.cfg
 
 # ## chown and chmod all files in rhel user home
 # chown -R rhel:rhel /home/$USER/ansible
@@ -34,81 +34,81 @@ systemctl disable systemd-tmpfiles-setup.service
 # chown -R rhel:rhel /home/$USER/ansible-files
 
 # ## git setup
-# git config --global user.email "rhel@example.com"
-# git config --global user.name "Red Hat"
-# su - $USER -c 'git config --global user.email "rhel@example.com"'
-# su - $USER -c 'git config --global user.name "Red Hat"'
+git config --global user.email "rhel@example.com"
+git config --global user.name "Red Hat"
+su - $USER -c 'git config --global user.email "rhel@example.com"'
+su - $USER -c 'git config --global user.name "Red Hat"'
 
 
 # ## set ansible-navigator default settings
 # ## for the EE to work we need to pass env variables
 # ## TODO: controller_host doesnt resolve with control and 127.0.0.1
 # ## is interpreted within the EE
-# su - $USER -c 'cat >/home/$USER/ansible-navigator.yml <<EOL
-# ---
-# ansible-navigator:
-#   ansible:
-#     inventory:
-#       entries:
-#       - /home/rhel/ansible-files/hosts
-#   execution-environment:
-#     container-engine: podman
-#     container-options:
-#       - "--net=host"
-#     enabled: true
-#     image: registry.redhat.io/ansible-automation-platform-25/ee-supported-rhel9
-#     pull:
-#       policy: missing
-#     environment-variables:
-#       pass:
-#         - CONTROLLER_USERNAME
-#         - CONTROLLER_PASSWORD
-#         - CONTROLLER_VERIFY_SSL
-#       set:
-#         CONTROLLER_HOST: localhost
-#   logging:
-#     level: debug
-#   mode: stdout
-#   playbook-artifact:
-#     save-as: /home/rhel/{playbook_name}-artifact-{time_stamp}.json
+su - $USER -c 'cat >/home/$USER/ansible-navigator.yml <<EOL
+---
+ansible-navigator:
+  ansible:
+    inventory:
+      entries:
+      - /home/rhel/ansible-files/hosts
+  execution-environment:
+    container-engine: podman
+    container-options:
+      - "--net=host"
+    enabled: true
+    image: registry.redhat.io/ansible-automation-platform-25/ee-supported-rhel9
+    pull:
+      policy: missing
+    environment-variables:
+      pass:
+        - CONTROLLER_USERNAME
+        - CONTROLLER_PASSWORD
+        - CONTROLLER_VERIFY_SSL
+      set:
+        CONTROLLER_HOST: localhost
+  logging:
+    level: debug
+  mode: stdout
+  playbook-artifact:
+    save-as: /home/rhel/{playbook_name}-artifact-{time_stamp}.json
 
 # EOL
 # cat /home/$USER/ansible-navigator.yml'
 
 # ## copy navigator settings
-# su - $USER -c 'cp /home/$USER/ansible-navigator.yml /home/$USER/.ansible-navigator.yml'
-# su - $USER -c 'cp /home/$USER/ansible-navigator.yml /home/$USER/ansible-files/ansible-navigator.yml'
+su - $USER -c 'cp /home/$USER/ansible-navigator.yml /home/$USER/.ansible-navigator.yml'
+su - $USER -c 'cp /home/$USER/ansible-navigator.yml /home/$USER/ansible-files/ansible-navigator.yml'
 
 
 # ## set inventory hosts for commandline ansible
-# su - $USER -c 'cat >/home/$USER/ansible-files/hosts <<EOL
-# [web]
-# node1
-# node2
+su - $USER -c 'cat >/home/$USER/ansible-files/hosts <<EOL
+[web]
+node1
+node2
 
-# [database]
-# node3
+[database]
+node3
 
-# [controller]
-# control
+[controller]
+control
 
-# EOL
-# cat /home/$USER/ansible-files/hosts'
-# ## end inventory hosts
+EOL
+cat /home/$USER/ansible-files/hosts'
+## end inventory hosts
 
 # ## chown and chmod all files in rhel user home
-# chown -R rhel:rhel /home/rhel/ansible
-# chmod 777 /home/rhel/ansible
-# #touch /home/rhel/ansible-files/hosts
-# chown -R rhel:rhel /home/rhel/ansible-files
+chown -R rhel:rhel /home/rhel/ansible
+chmod 777 /home/rhel/ansible
+#touch /home/rhel/ansible-files/hosts
+chown -R rhel:rhel /home/rhel/ansible-files
 
-# ## install ansible-navigator
-# dnf install -y python3-pip 
-# su - $USER -c 'python3 -m pip install ansible-navigator --user'
-# echo 'export PATH=$HOME/.local/bin:$PATH' >> /home/$USER/.profile
-# echo 'export PATH=$HOME/.local/bin:$PATH' >> /etc/profile
+## install ansible-navigator
+dnf install -y python3-pip 
+su - $USER -c 'python3 -m pip install ansible-navigator --user'
+echo 'export PATH=$HOME/.local/bin:$PATH' >> /home/$USER/.profile
+echo 'export PATH=$HOME/.local/bin:$PATH' >> /etc/profile
 
-# git clone https://github.com/ansible-tmm/instruqt-controller-101.git /tmp/controller-101-2024
+git clone https://github.com/ansible-tmm/instruqt-controller-101.git /tmp/controller-101-2024
 
 # # # creates a playbook to setup environment
 
