@@ -108,8 +108,6 @@ su - $USER -c 'python3 -m pip install ansible-navigator --user'
 echo 'export PATH=$HOME/.local/bin:$PATH' >> /home/$USER/.profile
 echo 'export PATH=$HOME/.local/bin:$PATH' >> /etc/profile
 
-git clone https://github.com/ansible-tmm/instruqt-controller-101.git /tmp/controller-101-2024
-
 # # # creates a playbook to setup environment
 
 tee /tmp/setup.yml << EOL
@@ -823,3 +821,4 @@ tee /tmp/setup.yml << EOL
 EOL
 
 ANSIBLE_COLLECTIONS_PATH=/tmp/ansible-automation-platform-containerized-setup-bundle-2.5-9-x86_64/collections/:/root/.ansible/collections/ansible_collections/ ansible-playbook -i /tmp/inventory /tmp/setup.yml
+git clone https://github.com/ansible-tmm/instruqt-controller-101.git /tmp/controller-101-2024
