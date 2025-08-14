@@ -107,6 +107,9 @@ su - $USER -c 'cp /home/$USER/ansible-navigator.yml /home/$USER/.ansible-navigat
 su - $USER -c 'cp /home/$USER/ansible-navigator.yml /home/$USER/ansible-files/ansible-navigator.yml'
 
 
+git clone https://github.com/ansible-tmm/controller-101.git /tmp/controller-101-2024
+
+
 # ## set inventory hosts for commandline ansible
 su - $USER -c 'cat >/home/$USER/ansible-files/hosts <<EOL
 [web]
@@ -846,6 +849,5 @@ tee /tmp/setup.yml << EOL
         - check-jt_apache
 
 EOL
-git clone https://github.com/ansible-tmm/instruqt-controller-101.git /tmp/controller-101-2024
 
 ANSIBLE_COLLECTIONS_PATH=/tmp/ansible-automation-platform-containerized-setup-bundle-2.5-9-x86_64/collections/:/root/.ansible/collections/ansible_collections/ ansible-playbook -i /tmp/inventory /tmp/setup.yml
