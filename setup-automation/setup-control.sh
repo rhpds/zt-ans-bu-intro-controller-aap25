@@ -846,6 +846,6 @@ tee /tmp/setup.yml << EOL
         - check-jt_apache
 
 EOL
+git clone https://github.com/ansible-tmm/instruqt-controller-101.git /tmp/controller-101-2024
 
 ANSIBLE_COLLECTIONS_PATH=/tmp/ansible-automation-platform-containerized-setup-bundle-2.5-9-x86_64/collections/:/root/.ansible/collections/ansible_collections/ ansible-playbook -i /tmp/inventory /tmp/setup.yml
-git clone https://github.com/ansible-tmm/instruqt-controller-101.git /tmp/controller-101-2024
