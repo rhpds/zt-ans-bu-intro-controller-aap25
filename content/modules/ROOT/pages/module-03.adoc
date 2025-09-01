@@ -1,86 +1,132 @@
-:doctype: book
+= Lab Guide: Creating an Inventory
+:notoc:
+:toc-title: Table of Contents
+:sectnums:
+:icons: font
 
-'''
+_A guide to managing hosts and groups the easy way by creating and populating an inventory in automation controller._
 
-slug: controller-101-inventory id: 3r6lsub3iiy6 type: challenge title: 1.1 - Creating an Inventory teaser: Managing hosts and groups the easy way notes:
+---
 
-* type: text contents: |-   # Inventories
+== Lab Briefing
+
+This section provides an overview of inventories in Ansible Automation Platform.
+
+=== What are Inventories?
+
+An **inventory** defines the hosts and groups of hosts upon which commands, modules, and tasks in a playbook operate. It is the fundamental way that Ansible and the automation controller keep track of what systems to manage.
+
+image::../assets/Oct-16-2024_at_02.39.15-image.png[Inventories list view in automation controller, opts="border"]
+
+In this challenge, you will be creating a new inventory, adding hosts to it, and then creating a group to organize those hosts.
+
+image::../assets/Oct-16-2024_at_02.39.47-image.png[Creating a new inventory, opts="border"]
+
+---
+
+== Lab Guide: Hands-On Tasks
+
+An inventory is a collection of hosts against which jobs (like playbooks) may be launched. This is the same concept as an Ansible inventory file, but with a powerful UI and additional features.
+
+Inventories are divided into *groups*, and these groups contain the actual *hosts*. Hosts can be referenced by their IP addresses or their hostnames and can be sourced manually or dynamically from a cloud provider.
+
+[IMPORTANT]
+====
+The credentials for the automation controller are:
+
+* *Username:* `admin`
+* *Password:* `ansible123!`
+====
+
+=== Task 1: Create the Inventory
+
+First, you will create a new, empty inventory to hold your managed nodes.
+
+. **Navigate to the Inventories page.**
 +
-image::../assets/Oct-16-2024_at_02.39.15-image.png[Oct-16-2024_at_02.39.15-image.png]
+In the left navigation menu, go to **Infrastructure** → **Inventories**.
+
+. **Create a new inventory.**
 +
-An inventory defines the hosts and groups of hosts upon which commands, modules, and tasks in a playbook operate.
+**Click** the blue **Create inventory** button and select **Create inventory** from the dropdown.
 
-* type: text contents: |-   # Inventories, create new inventory
+. **Enter the inventory details.**
 +
-image::../assets/Oct-16-2024_at_02.39.47-image.png[Oct-16-2024_at_02.39.47-image.png]
+Fill out the form with the following information:
 +
-In this challenge, we will be creating a new inventory, adding hosts and creating a host group inside the inventory.
-tabs:
+* **Name:** `Lab-Inventory`
+* **Organization:** `Default`
 
-* id: p8ktesjmsej6 title: Automation controller type: service hostname: control path: / port: 443
-* id: 4aezyvjr82gp title: Terminal type: terminal hostname: control difficulty: "" timelimit: 600 enhanced_loading: null -- 🗃️ 1.1 - Inventories ===
+. **Save the inventory.**
++
+**Click** the blue **Create inventory** button.
 
-An inventory is a collection of hosts against which jobs (ex.
-playbooks) may be launched, the same as an Ansible inventory file, it indicates which nodes will be managed by the control machine, in this case the automation controller.
+=== Task 2: Add Hosts to the Inventory
 
-*Inventories* may be divided into _groups_ and these groups contain the actual _hosts_.
-The _hosts_ may be sourced manually or dynamically and can be referenced by their *IP addresses* or their *hostnames*.
+Now you will manually add two hosts to your new inventory.
 
-In automation controller you will be able to run multiple playbooks against these inventories without recreating them.
+NOTE: If you are not already on the `Lab-Inventory` details page, navigate back to it by clicking its name in the inventory list.
 
-____
-[!IMPORTANT] The credentials for AAP are:
+. **Navigate to the Hosts tab.**
++
+Within the `Lab-Inventory`, **click** the **Hosts** tab.
 
-* Username: `admin`
-* Password: `ansible123!`
-____
+. **Create the first host.**
++
+**Click** the blue **Create host** button. In the *Name* field, enter `node1`. Leave all other fields as they are and **click** *Create host*.
 
-= ☑️ Task 1 - Creation of the Inventory
+. **Create the second host.**
++
+Navigate back to the main hosts list by clicking the **< Back to Hosts** breadcrumb link. **Repeat** the steps above to create a second host named `node2`.
 
-. On the side navigation bar, click the Automation Execution menu option
-. Now click the *Infrastructure* section to expand it and click on *Inventories*
-. Click on the blue *Create inventory* button
-. Select *Create inventory* from the dropdown
-. Name it `Lab-Inventory` .
-. In the *Organization* dropdown, select `Default`
-. Leave all the other fields as they are.
-. Click *Create inventory*
+=== Task 3: Create a Group
 
-= ☑️ Task 2 - Add Hosts to the Lab-Inventory
+Groups are used to organize hosts and apply variables to multiple hosts at once.
 
-____
-[!NOTE] If you are not in the  *Lab-Inventory*, click on it again to edit it.
-____
+. **Navigate to the Groups tab.**
++
+Go back to the main `Lab-Inventory` page and **click** the **Groups** tab.
 
-. Inside the `Lab-Inventory` you will see a tab bar
-. On the tab bar, click on *Hosts*
-. Click on the blue *Create host* button in the center.
-. In the *Name* text box enter `node1` . Leave all the other fields as they are.
-. Click *Create host*
-. Use the breadcrumb *"< Back to Hosts"* on the tab bar, or click *Hosts* on the sidebar.
-. Repeat the above steps to create a new host, named `node2` in `Lab-Inventory`.
+. **Create a new group.**
++
+**Click** the blue **Create group** button.
 
-= ☑️ Task 3 - Create the [web] group in Lab-Inventory
+. **Name the group.**
++
+In the *Name* field, enter `web`.
++
+NOTE: Unlike in a static inventory file, you do not need to use brackets `[]` around the group name in the UI.
 
-. On the sidebar, go to *Inventories* and click on  the `Lab-Inventory`
-. On the tab bar of `Lab-Inventory`, click on the  *Groups* tab
-. Click on the *Create group* button to create a new group.
-. Name the group `web` (NOTE: you don't need to input it with the brackets `+[ ...]+` like you would in an inventory file).
-. Click *Create group*
+. **Save the group.**
++
+**Click** the blue **Create group** button.
 
-= ☑️ Task 4 - Add node1 and node2 to the [web] group in Lab-Inventory
+=== Task 4: Add Hosts to the Group
 
-. Inside the `web`  group you just created
-. Click on the *Hosts* tab on the top menu
-. Click *Add existing host*.
-A pop up will appear.
-. Tick both `node1` and `node2` then click *Add hosts*.
-. Verify `node1` and `node2` are now added to the `web` group in the *Hosts* tab
+Finally, you will associate your two hosts with the new `web` group.
 
-= ✅ Next Challenge
+. **Navigate to the Hosts tab for the group.**
++
+Inside the `web` group you just created, **click** the **Hosts** tab.
 
-Press the `Check` button below to go to the next challenge once you've completed the task.
+. **Add existing hosts.**
++
+**Click** the blue **Add existing host** button.
 
-= 🐛 Encountered an issue?
+. **Select the hosts.**
++
+In the pop-up window, **select the checkbox** for both `node1` and `node2`, then **click** *Add hosts*.
 
-If you have encountered an issue or have noticed something not quite right, please https://github.com/ansible/instruqt/issues/new?labels=controller-101&title=Issue+with+Intro+to+Controller+slug+ID:+controller-101-inventory+AAP25&assignees=leogallego[open an issue].
+. **Verify the association.**
++
+You should now see both `node1` and `node2` listed in the *Hosts* tab for the `web` group.
+
+---
+
+== Next Steps
+
+Press the `Check` button below to proceed to the next challenge.
+
+== Troubleshooting
+
+If you have encountered an issue or have noticed something not quite right, please link:https://github.com/ansible/instruqt/issues/new?labels=controller-101&title=Issue+with+Intro+to+Controller+slug+ID:+controller-101-inventory+AAP25&assignees=leogallego[open an issue on GitHub].
