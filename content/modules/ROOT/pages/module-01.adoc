@@ -1,5 +1,5 @@
 = Welcome to Ansible Automation Platform Interactive Labs
-:toc:
+:notoc:
 :toc-title: Table of Contents
 :sectnums:
 :icons: font
