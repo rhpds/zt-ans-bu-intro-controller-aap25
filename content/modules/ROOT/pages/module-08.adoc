@@ -1,84 +1,142 @@
-:doctype: book
+= Lab Guide: Creating Multiple Job Templates
+:notoc:
+:toc-title: Table of Contents
+:sectnums:
+:icons: font
 
-'''
+_A guide to creating a second and third Job Template to run different playbooks from your projects._
 
-slug: controller-101-template-extended id: a47k97ltqnri type: challenge title: 1.6 - Creating a second and third Job Templates teaser: Each Job Template is a playbook, let's create a second one notes:
+---
 
-* type: text contents: |+   # Job templates
+== Lab Briefing
+
+In the automation controller, **job templates** are a visual representation of the `ansible-playbook` command and all the flags you can use when executing from the command line. They are the primary mechanism for running your Ansible Playbooks.
+
+image::../assets/images/job-templates-home-with-example-job-template.png[Job Templates list view in automation controller, opts="border"]
+
+---
+
+== Lab Guide: Hands-On Tasks
+
+Let's use what you learned previously to create a second and third **Job Template**.
+
+* Your second Job Template, `Extended services`, will use the `extended_services.yml` playbook to deploy a PostgreSQL database to `node3`.
+* Your third Job Template, `Set motd`, will use the `motd_facts.yml` playbook to set a message of the day on `node1`.
+
+NOTE: This exercise demonstrates how you can use different playbooks from the same Project in multiple Job Templates.
+
+[IMPORTANT]
+====
+Reminder that the credentials to log in to the automation controller are:
+
+* *Username:* `admin`
+* *Password:* `ansible123!`
+====
+
+=== Task 1: Create the "Extended Services" Job Template
+
+First, you will create the job template to deploy the database.
+
+. **Navigate to the Templates page.**
 +
-image::../assets/job-templates-home-with-example-job-template.png[job-templates-home-with-example-job-template.png]
+In the left navigation menu, go to **Automation Execution** → **Templates**.
+
+. **Create a new job template.**
 +
-In controller, job templates are a visual representation of the `ansible-playbook` command and all flags you can utilize when executing from the command line.
+**Click** the blue **Create template** button and select **Create job template**.
 
-tabs:
+. **Enter the job template details.**
++
+Fill out the form with the following information:
++
+* **Name:** `Extended services`
+* **Job Type:** `Run`
+* **Inventory:** `Lab-Inventory`
+* **Project:** `Additional playbooks`
+* **Playbook:** `extended_services.yml`
+* **Credentials:** Select `lab-credentials`.
+* **Privilege Escalation:** **Check** this box to enable `become`.
 
-* id: 0hvktkhlm4mx title: Automation controller type: service hostname: control path: / port: 443 difficulty: "" timelimit: 600 enhanced_loading: null -- 📑 1.6 - Second and third Job Templates ===
+. **Save the job template.**
++
+Leave all other fields as they are and **click** the blue **Create job template** button.
 
-Let's use what we learned previously and create a second and third *Job Templates*.
+[IMPORTANT]
+====
+Remember to set the **Credentials** field. It's not a mandatory field in the UI, but if you don't select the correct machine credentials, the job will fail.
+====
 
-* Our *second Job Template* will be named `Extended services` and use the `extended_services.yml` playbook found in the `Additional playbooks` project.
-This playbook will deploy a PostgreSQL database in `node3` server, which belongs to the `[database]` group of our `Lab-Inventory`.
-* And our *third Job Template* will be named `Set motd` and use the `motd_facts.yml` playbook also found in the `Additional playbooks` project.
-This playbook will set a message of the day only in `node1`.
+=== Task 2: Launch the "Extended Services" Job Template
 
-____
-[!NOTE] Notice how we can use Playbooks from the same Project in different Job Templates.
-____
+Now, launch the template and troubleshoot the expected failure.
 
-____
-[!IMPORTANT] Reminder that the credentials to login to AAP are:
+. **Launch the template.**
++
+Navigate to the **Templates** page and **click** the **Launch** icon (🚀) next to the `Extended services` job template.
 
-* Username: `admin`
-* Password: `ansible123!`
-____
+. **Observe and resolve the failure.**
++
+The job execution will **fail**. Read the output message to understand why. The playbook is trying to run on a host named `node3` in a group named `[database]`, but neither of these exist in your `Lab-Inventory`.
 
-= ☑️ Task 1 - Creation of the "Extended services" Job Template
+. **Update the inventory.**
++
+Using what you learned in the inventory challenge, go back to your `Lab-Inventory` and perform the following actions:
++
+--
+* **Create** a new host named `node3`.
+* **Create** a new group named `database`.
+* **Add** the `node3` host to the `database` group.
+--
 
-. Expand the *Automation Execution* menu in the sidebar
-. Click the *Templates* link
-. Click the *Create template* dropdown button and select *Create job template*
-. *Name* the Job Template as `Extended services`
-. For the *Job Type* field, leave the default: *Run*
-. For the *Inventory* field, touch the magnifying glass and select `Lab-Inventory`
-. For the *Project* field, touch the magnifying glass and select `Additional playbooks`
-. For the *Playbook* dropdown field, you will notice that it's auto populated with all the playbooks available in the *Project* repository we selected.
-Choose the `extended_services.yml`.
-. For the *Credentials* field, touch the magnifying glass and select `lab-credentials`
-. Scroll to the bottom and tick the *Privilege escalation* checkbox
-. Leave all the other fields the same and click *Create job template*
+. **Relaunch the job.**
++
+**Launch** the `Extended services` job template again and verify that it now succeeds.
 
-____
-[!IMPORTANT] Remember to set the *Credentials* field.
-It's not a mandatory field, but if you don't set the right credentials, Ansible can't connect and the job will fail!
-____
+=== Task 3: Create the "Set motd" Job Template
 
-= ☑️ Task 2 - Launch the "Extended services" Job Template
+Now, apply what you've learned to create the third job template.
 
-. Expand the *Automation Execution* menu in the sidebar
-. Click the *Templates* link
-. You can launch it from this list by clicking the *Rocket* icon next to each of the Job Templates
-. The execution should have *failed*.
-Why did it fail?
-Read the output message.
-. We are missing the `node3` server and the `[database]` group in our `Lab-Inventory`.
-Create them applying what you learned earlier.
-. Launch the *Job Template* again and verify it succeeds.
-. If you are having trouble with this step, move ahead to the next tasks and at the end use the *Skip* button instead of *Check*
+. **Navigate to the Templates page.**
++
+Go to **Automation Execution** → **Templates**.
 
-= ☑️ Task 3 - Creation of the "Set motd" Job Template
+. **Create a new job template.**
++
+**Click** the **Create template** button and select **Create job template**.
 
-Use the instructions from the previous task to create the new `Set motd` Job Template and use the `motd_facts.yml` playbook also found in the `Additional playbooks` project.
+. **Enter the job template details.**
++
+Fill out the form with the following information:
++
+* **Name:** `Set motd`
+* **Inventory:** `Lab-Inventory`
+* **Project:** `Additional playbooks`
+* **Playbook:** `motd_facts.yml`
+* **Credentials:** Select `lab-credentials`.
+* **Privilege Escalation:** **Check** this box.
 
-= ☑️ Task 4 - Launch the "Set motd" Job Template
+. **Save the job template.**
++
+**Click** the blue **Create job template** button.
 
-. Click the *Templates* link in the sidebar again
-. You can launch it from this list, by clicking the *Rocket* icon next to each of the Job Templates
-. Verify the execution was successful
+=== Task 4: Launch the "Set motd" Job Template
 
-= ✅ Next Challenge
+Finally, launch the new template to set the message of the day.
 
-Press the `Check` button below to go to the next challenge once you've completed the task.
+. **Launch the template.**
++
+From the **Templates** list, **click** the **Launch** icon (🚀) next to the `Set motd` job template.
 
-= 🐛 Encountered an issue?
+. **Verify the execution was successful.**
++
+The job should complete with a **Successful** status.
 
-If you have encountered an issue or have noticed something not quite right, please https://github.com/ansible/instruqt/issues/new?labels=controller-101&title=controller-101+slug+ID:+controller-101-template-extended&assignees=leogallego[open an issue].
+---
+
+== Next Steps
+
+Press the `Check` button below to proceed to the next challenge.
+
+== Troubleshooting
+
+If you have encountered an issue or have noticed something not quite right, please link:https://github.com/ansible/instruqt/issues/new?labels=controller-101&title=controller-101+slug+ID:+controller-101-template-extended&assignees=leogallego[open an issue on GitHub].
