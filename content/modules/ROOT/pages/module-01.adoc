@@ -1,50 +1,45 @@
-:doctype: book
+= Welcome to Ansible Automation Platform Interactive Labs
+:toc:
+:toc-title: Table of Contents
+:sectnums:
+:icons: font
 
-'''
+Welcome! In this lab, we will explore the web-based user interface (web UI) of the Ansible Automation Platform's **automation controller**.
 
-slug: controller-101-intro id: ycsfmtvpjhqs type: challenge title: 0.
-- Workshop tips teaser: Introduction and tips to the laboratory notes:
+Through hands-on exercises, we will demonstrate how easy it is to use the web UI to manage and run your Ansible Playbooks. You will start by exploring the interface, creating an **Inventory** to manage servers, importing playbooks into **Projects**, adding **Job Templates** to run those playbooks, and finally, creating a **Workflow** to link them together.
 
-* type: text contents: |-   # Welcome to Ansible Automation Platform
+---
+
+== Automation Platform Overview
+
+The **Overview** screen is the main dashboard of the automation controller. It shows a summary of your hosts, projects, and inventories, with each count being a direct link to the corresponding objects for easy access. Below the resource counts, you will find a Job Activity graph and a card-like summary of recent Jobs, Projects, and Inventories.
+
+We will go through all of these sections in the upcoming challenges.
+
+image::../assets/Oct-16-2024_at_02.01.47-image.png[Automation controller overview dashboard, opts="border"]
+
+---
+
+== Laboratory Tips
+
+Before we begin, here are some basic tips to improve your lab experience:
+
+. The **instructions sidebar** (where you are reading this) can be resized by dragging its border or can be completely collapsed by clicking the "Hide instructions" button at the top. This is useful if you need extra space for the main panel.
 +
-Welcome to Ansible Automation Platform interactive labs!
-In this laboratory we will explore the Automation Execution (also known as Automation controller) web-based user interface (web-UI) of Ansible Automation Platform.
-+
-Through hands-on exercises we will demonstrate how easy it is to use the web-UI of Ansible Automation Platform to run your playbooks.
-+
-We will start exploring the web-UI, create an *Inventory* to manage our servers, import our playbooks into *Projects*, add *Job Templates* to run our playbooks and finally, create a *Workflow* linking a few of those playbooks through success or failure conditions, to create more complex environments.
+image:../assets/image.png[Collapsing and expanding the instructions sidebar, opts="border"]
 
-* type: text contents: |-   # Automation Platform Overview
-+
-image::../assets/Oct-16-2024_at_02.01.47-image.png[Oct-16-2024_at_02.01.47-image.png]
-+
-The *Overview*  shows a summary of your hosts, projects and inventories.
-Each of them are a link to the corresponding objects for easy access.
-Right below the resource counts, you will find a Job Activity graph with the executions and below that a card-like summary of the existing Jobs, Projects and Inventories.
-+
-We will go through all of this sections in the upcoming challenges, while doing hands-on exercises.
-tabs:
+. When you finish a challenge, you must click the green **Check** (or **Next**) button at the bottom of the instructions to proceed.
 
-* id: sd8jb6eycupg title: Automation controller type: service hostname: control path: / port: 443
-* id: shkrwdndryrq title: Terminal type: terminal hostname: control difficulty: "" timelimit: 600 enhanced_loading: null -- 💡 Laboratory tips before we begin!
-===
+. You have the option to **Skip** a challenge. Keep in mind this will auto-complete the exercises for that section.
 
-Before we begin, some basic tips to improve your lab experience:
+. The lab has a **55-minute limit** that can be extended. If you need more time, make sure to accept the pop-up when it appears.
 
-. The instructions sidebar (where you are reading this) can be resized  by dragging the border or completely collapsed by clicking on the "Hide instructions" button at the top.
-This is useful  in case you need extra space for the main panel depending on your resolution.
-You can try this now!
-. In the instructions sidebar, you will find the different sections or tasks.
-In each chapter or challenge, there will be an introduction to the challenge and the related tasks below.
-The sections can be collapsed and expanded by clicking on them.
-image:../assets/image.png[image.png]
-. When you finish with a challenge (or chapter), you need to click the green *Check* button at the bottom of the instructions to move to the next one.
-This will review the steps.
-If no review is required the button might simply be labeled *Next*.
-. You have the option to *Skip* a challenge or chapter, keep in mind this will auto-solve the exercises or tasks in that challenge.
-. The lab has a 55 minutes limit that can be extended at the end.
-If you need more time, make sure to accept the popup.
-. You will find the credentials to login into AAP in the next challenge
-. To start with the exercises click the green button labeled *Next*  below.
+. You will find the credentials to log into the automation controller in the next challenge.
 
-= 🐛 Encountered an issue?
+. To begin the exercises, click the green button labeled **Next** below.
+
+---
+
+== Troubleshooting
+
+If you encounter an issue, please notify the lab facilitator for assistance.
