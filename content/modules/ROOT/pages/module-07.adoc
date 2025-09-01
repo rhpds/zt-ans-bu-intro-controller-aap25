@@ -1,61 +1,90 @@
-:doctype: book
+= Lab Guide: Creating a Second Project
+:notoc:
+:toc-title: Table of Contents
+:sectnums:
+:icons: font
 
-'''
+_A guide to importing a second repository into a new project in the automation controller._
 
-slug: controller-101-project-additional id: sejf20xdjvlh type: challenge title: 1.5 - Creating a second Project teaser: Importing a second repository into a new project notes:
+---
 
-* type: text contents: |-   # Projects
+== Lab Briefing
+
+A **Project** is a logical collection of Ansible Playbooks. You can manage playbooks by placing them into a source code management (SCM) system supported by the automation controller, such as Git, Subversion, or even Red Hat Insights.
+
+image::../assets/images/projects-list-all.png[Projects list view in automation controller, opts="border"]
+
+---
+
+== Lab Guide: Hands-On Tasks
+
+You already have a Project named `Apache playbooks` from a previous challenge. In this new challenge, you will create a second project named `Additional playbooks` which will import playbooks to install other services (`extended_services.yml`), set a message of the day (`motd_facts.yml`), and create multiple users (`loop_users.yml`).
+
+[IMPORTANT]
+====
+Reminder that the credentials to log in to the automation controller are:
+
+* *Username:* `admin`
+* *Password:* `ansible123!`
+====
+
+=== Task 1: Create the Second Project
+
+First, you will create another new project that points to a different public Git repository.
+
+. **Navigate to the Projects page.**
 +
-image::../assets/projects-list-all.png[projects-list-all.png]
+In the left navigation menu, go to **Automation Execution** → **Projects**.
+
+. **Create a new project.**
 +
-You can manage playbooks on your server, or by placing your playbooks into a source code management (SCM) system supported by automation controller, including Git, Subversion, and Red Hat Insights.
-tabs:
+**Click** the blue **Create project** button.
 
-* id: llj0zwqhyexx title: Automation controller type: service hostname: control path: / port: 443 difficulty: "" timelimit: 600 enhanced_loading: null -- 💡 1.5 - Projects ===
-
-We already have a *Project* called `Apache playbooks` from a previous challenge, where we can find the `apache.yml` and `test_apache_role.yml`  playbooks.
-
-In this new challenge, we are going to create a second project named `Additional playbooks`, which will include the following playbooks: `extended_services.yml` (installs postfix and postgresql), `motd_facts.yml` (sets a message of the day) and `loop_users.yml` (creates multiple users).
-
-____
-[!IMPORTANT] Reminder that the credentials to login to AAP are:
-
-* Username: `admin`
-* Password: `ansible123!`
-____
-
-= ☑️ Task 1 - Creating the second Project
-
-. Expand the *Automation Execution* section in the sidebar menu
-. Click the *Projects* link in the menu
-. Click the *Create project* button
-. *Name* the Project as `Additional playbooks`
-. For the *Organization* field, select `Default` in the dropdown
-. For the *Source Control Type* dropdown, select *Git*, this will enable new fields below.
-. For the *Source Control URL* field copy & paste the following URL:
+. **Enter the project details.**
 +
+Fill out the form with the following information:
++
+* **Name:** `Additional playbooks`
+* **Organization:** `Default`
+* **Source Control Type:** `Git`
+* **Source Control URL:**
++
+[source,text]
 ----
- https://github.com/leogallego/instruqt-wyfp-additional.git
+https://github.com/leogallego/instruqt-wyfp-additional.git
 ----
 
-. Leave all the other fields the same and click *Create project*
+. **Save the project.**
++
+Leave all other fields as they are and **click** the blue **Create project** button.
 
-= ☑️ Task 2 - Verify the new Project synced successfully
+=== Task 2: Verify the Project Sync
 
-. After saving, you should be taken to the *Details* of the project we just created
-. The *Last Job Status* should display *Running* in blue, give it a few seconds
-. If it changed to *Success* and is showing in green, the project synced correctly.
+After creating the project, the automation controller automatically initiates a sync process to download the playbooks from the Git repository.
 
-As an alternative, to see the status of multiple projects, you can:
+. **Check the project status.**
++
+After saving, you will be taken to the *Details* page for the new project. The *Last Job Status* should initially display **Running** in blue.
 
-. Click the *Projects* link  in the *Automation Execution* section in the sidebar menu
-. Check the *Status* column for the `Additional playbooks` is green and reads *Success*
-. Click the *Success* and review the output of the sync
+. **Verify the sync was successful.**
++
+After a few seconds, the status should change to **Successful** and turn green. This indicates the project has synced correctly.
 
-= ✅ Next Challenge
+. **(Alternative) View status from the Projects list.**
++
+You can also verify the status by navigating back to the main **Projects** page (**Automation Execution** → **Projects**).
++
+--
+a. **Check** that the *Status* column for `Additional playbooks` is green and reads **Successful**.
+b. **Click** on the **Successful** status text to review the output of the sync job.
+--
 
-Press the `Check` button below to go to the next challenge once you've completed the task.
+---
 
-= 🐛 Encountered an issue?
+== Next Steps
 
-If you have encountered an issue or have noticed something not quite right, please https://github.com/ansible/instruqt/issues/new?labels=intro-to-controller&title=Issue+with+Intro+to+Controller+slug+ID:+controller-101-project-2&assignees=leogallego[open an issue].
+Press the `Check` button below to proceed to the next challenge.
+
+== Troubleshooting
+
+If you have encountered an issue or have noticed something not quite right, please link:https://github.com/ansible/instruqt/issues/new?labels=intro-to-controller&title=Issue+with+Intro+to+Controller+slug+ID:+controller-101-project-2&assignees=leogallego[open an issue on GitHub].
