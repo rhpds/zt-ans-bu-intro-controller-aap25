@@ -1,66 +1,96 @@
-:doctype: book
+= Lab Guide: Understanding Credentials
+:notoc:
+:toc-title: Table of Contents
+:sectnums:
+:icons: font
 
-'''
+_A guide to checking the authentication options of automation controller by exploring the Credentials section._
 
-slug: controller-101-credentials id: h1qqqibr1zbf type: challenge title: 1.3 - Get to know Credentials teaser: Check the authentication options of automation controller notes:
+---
 
-* type: text contents: |-   # Credentials
+== Lab Briefing
+
+**Credentials** are used for authentication when launching jobs against machines, synchronizing with inventory sources, and importing project content from a version control system.
+
+image::../assets/images/credentials-demo-edit-details.png[Details of a machine credential, opts="border"]
+
+---
+
+== Lab Guide: Hands-On Tasks
+
+**Credentials** are utilized by Ansible Automation Platform for authentication when launching jobs against devices, syncing with inventory sources, or importing projects from version control.
+
+Credentials are imported and stored encrypted within the automation controller and are not retrievable in plain text by any user. You can grant users and teams the ability to use these credentials without actually exposing the sensitive information to them.
+
+There are over 20 supported credential types, ranging from tokens to user/passwords or SSH keys. Today, you will explore the **Machine** credential type, which is used to connect to servers via SSH.
+
+[WARNING]
+====
+In this exercise, you are only observing. Please do not make any changes, as the credentials are pre-loaded for you.
+====
+
+[IMPORTANT]
+====
+Reminder that the credentials to log in to the automation controller are:
+
+* *Username:* `admin`
+* *Password:* `ansible123!`
+====
+
+=== Task 1: Explore the Credentials Section
+
+First, you will navigate to the Credentials section and examine a pre-loaded credential.
+
+. **Navigate to the Credentials page.**
 +
-image::../assets/credentials-demo-edit-details.png[credentials-demo-edit-details.png]
+In the left navigation menu, go to **Automation Execution** → **Infrastructure** → **Credentials**.
+
+. **View the list of credentials.**
 +
-Credentials are utilized for authentication when launching Jobs against machines, synchronizing with inventory sources, and importing project content from a version control system.
-tabs:
+This will display a searchable list of credentials, classified by name and type.
 
-* id: yfzitf7v7krx title: Automation controller type: service hostname: control path: / port: 443 difficulty: "" timelimit: 600 enhanced_loading: null -- 🔐 1.3 - Credentials ===
+. **Open the lab credential.**
++
+**Look** for the `lab-credentials` credential, which is a *Machine* type, and **click** on its name.
 
-*Credentials* are utilized by Ansible Automation Platform for authentication when launching jobs against devices or managed nodes, synchronizing with inventory sources, and importing project content from a version control system.
+. **Examine the credential details.**
++
+On the *Details* tab, notice that the *SSH Private Key* field shows **Encrypted**.
 
-Credentials are imported and stored encrypted within Ansible automation controller, and are not retrievable in plain text on the command line by any user.
-You can grant users and teams the ability to use these credentials, without actually exposing the credential to the user itself.
+. **Check credential access.**
++
+**Click** the **Team Access** and **User Access** tabs to see which automation controller users and teams have permission to use this credential.
 
-There are multiple types of credential types, ranging from tokens, to user/passwords or public keys.
-In total, there are over 20 supported types and even the option to create _Custom_ ones.
-We will explore the *Machine* credential type today, which we will use to connect to the servers in our inventory through SSH.
+. **Check credential usage.**
++
+**Click** the **Job Templates** tab. This tab shows which jobs are currently using this credential. It should be empty right now.
 
-____
-[!wARNING] In this excercise we are not making any changes.
-Credentials are pre-loaded.
-____
+=== Task 2: Examine a Machine Credential
 
-____
-[!IMPORTANT] Reminder that the credentials to login to AAP are:
+Next, you will enter the edit view for the credential to see the available fields.
 
-* Username: `admin`
-* Password: `ansible123!`
-____
+. **Enter the credential edit view.**
++
+Go back to the *Details* tab for `lab-credentials` and **click** the **Edit credential** button.
 
-= ☑️ Task 1 - Exploring the Credentials section
+. **Observe the available fields.**
++
+Look at the different configuration options available for a Machine credential, but *do not edit or change anything*.
 
-. In the sidebar, expand the *Automation Execution* section
-. Now expand the *Infrastructure* menu and click the *Credentials* option
-. This will display a searchable list of pre-loaded credentials, classified by name and type.
-. Look for the `lab-credentials`, notice it says *Machine* type.
-Click on it.
-. Here you can see the details of the credential.
-Notice the *SSH Private Key* field says *Encrypted*.
-. Click the *Team Access* and *User Access* tab to see who has access to use this credential.
-These are the automation controller users.
-. Click the *Job Templates* tab to see what Jobs are currently using this credential.
-It should be empty right now.
+. **Note the encrypted key.**
++
+Notice that the *SSH Private Key* field only allows you to **Reset** the value. As mentioned before, the key is encrypted and not retrievable from the UI after it has been saved.
 
-= ☑️ Task 2 - Exploring the Machine Type credential
+. **Exit the edit view.**
++
+**Click** the **Cancel** button to exit without making any accidental modifications.
 
-. Go back to the *Details* tab of the *lab-credentials*
-. Click the *Edit credential* button
-. Look at the different fields available, but *don't edit or change anything*.
-. Notice how the *SSH Private Key* field only allows us to *Reset*.
-As we mentioned before, the key is encrypted and not retrievable.
-. To exit, click the *Cancel* button to avoid accidental modifications.
+---
 
-= ✅ Next Challenge
+== Next Steps
 
-Press the `Check` button below to go to the next challenge once you've completed the task.
+Press the `Check` button below to proceed to the next challenge.
 
-= 🐛 Encountered an issue?
+== Troubleshooting
 
-If you have encountered an issue or have noticed something not quite right, please https://github.com/ansible/instruqt/issues/new?labels=controller-101&title=Issue+with+Intro+to+Controller+slug+ID:+controller-101-template+AAP25&assignees=leogallego[open an issue].
+If you have encountered an issue or have noticed something not quite right, please link:https://github.com/ansible/instruqt/issues/new?labels=controller-101&title=Issue+with+Intro+to+Controller+slug+ID:+controller-101-template+AAP25&assignees=leogallego[open an issue on GitHub].
