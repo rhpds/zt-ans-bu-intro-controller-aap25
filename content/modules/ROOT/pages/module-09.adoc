@@ -1,133 +1,159 @@
-:doctype: book
+= Lab Guide: Creating a Workflow Job Template
+:notoc:
+:toc-title: Table of Contents
+:sectnums:
+:icons: font
 
-'''
+_A guide to connecting all the dots by linking multiple playbooks with conditional logic in a workflow._
 
-slug: controller-101-workflow id: 2skayooaiuee type: challenge title: 1.7 - Creating a Workflow Job Template teaser: 'Connecting all the dots: Link multiple playbooks by conditions' notes:
+---
 
-* type: text contents: |-   # Workflows
-+
-image::../assets/wf-templates-home-with-example-wf-template.png[wf-templates-home-with-example-wf-template.png]
-+
-A workflow job template links together different resources in a graphical way, this can include multiple playbooks (job templates), project syncs and even other workflows.
-tabs:
+== Lab Briefing
 
-* id: l1x1sy1y8n6n title: Automation controller type: service hostname: control path: / port: 443
-* id: cpxezyta22dy title: Terminal type: terminal hostname: control difficulty: "" timelimit: 600 enhanced_loading: null -- 🔗 1.7 - Workflows ===
+A **workflow job template** links together different resources in a graphical way. This can include multiple job templates (playbooks), project syncs, and even other workflows, allowing you to build complex, multi-step automation processes.
 
-A *Workflow Job Template* is a series of connected automation tasks (or Playbooks) that are executed in a specific order to achieve a desired outcome.
-Compared to an individual Playbook (or Job Template), a *Job Template* handles straightforward tasks in a single playbook, while a *Workflow job template* is designed to manage more complex automation scenarios involving multiple playbooks (or Job Templates) and decision-making processes.
+image::../assets/images/wf-templates-home-with-example-wf-template.png[Workflow Job Templates list view, opts="border"]
+
+---
+
+== Lab Guide: Hands-On Tasks
+
+A **Workflow Job Template** is a series of connected automation tasks that are executed in a specific order. While a standard Job Template handles a single playbook, a Workflow Job Template is designed for more complex scenarios involving multiple playbooks and decision-making processes.
+
+Workflows can orchestrate various node types, including:
 
 * Job templates
-* Workflow job templates
+* Other workflow job templates
 * Project syncs
 * Inventory source syncs
 
-Only *Workflow Job Templates* have the Workflow Visualizer icon (wf-viz-icon) as a shortcut for accessing the workflow editor.
+[WARNING]
+====
+Remember not to confuse a **Job Template**, a **Jinja template**, and a **Workflow Job Template**. They are three separate concepts.
+====
 
-____
-[!WARNING] Remember, do not confuse a *Job Template* with a *Jinja template*, or with *Workflow Job Template*.
-They are 3 separate things.
-____
+[IMPORTANT]
+====
+Reminder that the credentials to log in to the automation controller are:
 
-____
-[!IMPORTANT] Reminder that the credentials to login to AAP are:
+* *Username:* `admin`
+* *Password:* `ansible123!`
+====
 
-* Username: `admin`
-* Password: `ansible123!`
-____
+=== Task 1: Create a Workflow Template
 
-= ☑️ Task 1 - Creating a Workflow Template
+First, you will create the main workflow that will contain your job templates.
 
-. Click the *Automation Execution* dropdown in the sidebar
-. Click the *Templates* link
-. Click the *Create template* dropdown button and select *Create workflow job template*
-. In the *Name* field, input `Your first workflow`.
-. In the *Description* field, input: `Create a Workflow from previous Job Templates`
-. In the *Organization* dropdown, select `Default`
-. In the *Inventory* field, select `Lab-Inventory` from the dropdown
-. Leave everything else the same and click *Create workflow job template*.
+. **Navigate to the Templates page.**
++
+In the left navigation menu, go to **Automation Execution** → **Templates**.
 
-= ☑️ Task 2 - Workflow Visualizer
+. **Create a new workflow job template.**
++
+**Click** the blue **Create template** button and select **Create workflow job template**.
 
-. This will take you to the Workflow Visualizer screen,
-. Click *Add step*, as the new Workflow is empty.
-. You will be presented with the *Add step* sidebar
-. For the *Node Type* field, select `Job Template` (default)
-. For the *Job Template* field, select `Install Apache`  from the dropdown.
-. Leave *Convergence* in `Any`
-. For the *Node alias* field, enter `apache101`, this is a simple label to use instead of the playbook name.
-. Click the *Next* button.
-In the next screen, review everything is correct and click *Finish*
+. **Enter the workflow details.**
++
+Fill out the form with the following information:
++
+* **Name:** `Your first workflow`
+* **Description:** `Create a Workflow from previous Job Templates`
+* **Organization:** `Default`
+* **Inventory:** `Lab-Inventory`
 
-= ☑️ Task 3 - Workflow Visualizer - Adding a condional step
+. **Save the workflow.**
++
+Leave all other fields as they are and **click** the blue **Create workflow job template** button.
 
-. Click the 3 dots next to the `apache101`  box we created in the previous step
-. Click the *Add step and link*
-. The same sidebar from before will show up to the right, this time with *one extra field*
-. For the *Node Type* field, select `Job Template` (default)
-. For the *Job Template* field, select `Extended services`
-. For the *Status* field, select `Run on sucess` from the dropdown
-. Leave *Convergence* in `Any`
-. For the *Node alias* field, enter `extended201`, this is a simple label to use instead of the playbook name.
-. Click the *Next* button.
-Review everything and click *Finish*.
+=== Task 2: Add the First Step in the Workflow Visualizer
 
-Congratulations!
-You have created a *Workflow Job Template* consisting of two linked *Job Templates*.
+After saving, you will be taken to the Workflow Visualizer, where you can build your workflow graphically.
 
-____
-[!NOTE] You can zoom in and out with the mouse wheel.
-____
+. **Add the first step.**
++
+**Click** the **Start** button to add the first node.
 
-= ☑️ Task 3 - Workflow Visualizer - Adding a parallel step
+. **Configure the first node.**
++
+In the *Add step* side panel that appears, configure the node as follows:
++
+* **Node Type:** `Job Template` (default)
+* **Job Template:** `Install Apache`
+* **Convergence:** `Any`
+* **Node alias:** `apache101` (This is a simple label for the node in the visualizer)
 
-____
-[!IMPORTANT] Pay atention to the source step!
-____
+. **Save the node.**
++
+**Click** **Next**, review the details, and then **click** **Finish**.
 
-Now let's add another step for a 3rd Job Template, but this time, it will run in parallel to the last one.
+=== Task 3: Add a Conditional Step
 
-. Click the 3 dots next to the `apache101`  box we created in the first step.
-. Click the *Add step and link*.
-Note this step will run in parallel to the last one, `extended201`.
-. The same sidebar from before will show up to the right, this time with *one extra field*
-. For the *Node Type* field, select `Job Template` (default)
-. For the *Job Template* field, select `Set motd`
-. For the *Status* field, select `Run on sucess` from the dropdown
-. Leave *Convergence* in `Any`
-. For the *Node alias* field, enter `motd201`, this is a simple label to use instead of the playbook name.
-. Click the *Next* button.
-Review everything and click *Finish*.
+Next, you will add a second step that runs only if the first step is successful.
 
-= ☑️ Task 4 - Workflow Visualizer - Save!
+. **Add a new linked step.**
++
+**Hover** over the `apache101` node, **click** the **+** icon, and select **Add node**.
 
-Now for the final step, we are going to save our Workflow:
+. **Configure the second node.**
++
+In the side panel, configure the new node as follows:
++
+* **Node Type:** `Job Template` (default)
+* **Job Template:** `Extended services`
+* **Run:** `On Success`
+* **Convergence:** `Any`
+* **Node alias:** `extended201`
 
-. Click the blue *Save* button at the top.
-If you miss this one, you will lose your changes!
+. **Save the node.**
++
+**Click** **Next**, review the details, and then **click** **Finish**.
 
-= ☑️ Task 5 - Launch the new Workflow
+=== Task 4: Add a Parallel Step
 
-There are 2 ways to launch our newly created Workflow.
-First the easiest while working on the Workflow:
+Now, add a third step that also runs after the first step, in parallel with the second step.
 
-. Within the same *Workflow Visualizer* screen
-. Click the 3 dots right below the name, at the top, and select *Launch workflow* from the dropdown
-. Verify all the jobs executed successfully.
-You will  notice a *Sucess* text next to the Workflow name, as well as a ✅ tick in each job box.
+. **Add another linked step from the first node.**
++
+**Hover** over the `apache101` node again, **click** the **+** icon, and select **Add node**.
 
-Another option is to go back to the *Templates* list and
+. **Configure the third node.**
++
+* **Node Type:** `Job Template` (default)
+* **Job Template:** `Set motd`
+* **Run:** `On Success`
+* **Convergence:** `Any`
+* **Node alias:** `motd201`
 
-. You can launch the Workflow from this list by clicking the 🚀 *Rocket* icon , or
-. You can click on the `Your first workflow`  name and click the *Launch template* button.
-. You will be presented with a smaller Workflow Visualizer that shows the progress of the execution as *Running*
-. Verify all the jobs executed successfully.
-You will  notice a *Sucess* text next to the Workflow name, as well as a ✅ tick in each job box.
+. **Save the node.**
++
+**Click** **Next**, review the details, and then **click** **Finish**.
 
-= ✅ Next Challenge
+. **Save the entire workflow.**
++
+Finally, **click** the blue **Save** button in the top right corner of the Visualizer. If you miss this step, you will lose your changes!
 
-Press the `Check` button below to go to the next challenge once you've completed the task.
+=== Task 5: Launch the Workflow
 
-= 🐛 Encountered an issue?
+Now you are ready to run your multi-step workflow.
 
-If you have encountered an issue or have noticed something not quite right, please https://github.com/ansible/instruqt/issues/new?labels=controller-101&title=Issue+with+Intro+to+Controller+slug+ID:+controller-101-workflow+AAP25&assignees=leogallego[open an issue].
+. **Launch the workflow from the Visualizer.**
++
+While still in the Workflow Visualizer, **click** the **Launch** button in the top right.
+
+. **Observe the execution.**
++
+You will be taken to a real-time view of the workflow execution. You will notice the `apache101` job runs first. Once it succeeds, both the `extended201` and `motd201` jobs will run in parallel. A green checkmark (✅) on each node indicates a successful run.
+
+. **(Alternative) Launch from the Templates list.**
++
+You can also launch the workflow by navigating back to the **Templates** page and clicking the **Launch** icon (🚀) next to `Your first workflow`.
+
+---
+
+== Next Steps
+
+Press the `Check` button below to proceed to the next challenge.
+
+== Troubleshooting
+
+If you have encountered an issue or have noticed something not quite right, please link:https://github.com/ansible/instruqt/issues/new?labels=controller-101&title=Issue+with+Intro+to+Controller+slug+ID:+controller-101-workflow+AAP25&assignees=leogallego[open an issue on GitHub].
