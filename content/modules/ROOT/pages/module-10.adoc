@@ -1,99 +1,139 @@
-:doctype: book
+= Lab Guide: Creating a Job Template with a Survey
+:notoc:
+:toc-title: Table of Contents
+:sectnums:
+:icons: font
 
-'''
+_A guide to creating a fourth Job Template for installing Apache, this time including a Survey to pass variables at runtime._
 
-slug: controller-101-template-survey id: cgprj2ulgs1u type: challenge title: 1.8 - Creating a Job Template with a Survey teaser: Level-up, let's try a fourth Job Template for installing Apache, including   a Survey this time notes:
+---
 
-* type: text contents: |+   # Job templates
+== Lab Briefing
+
+In the automation controller, **job templates** are a visual representation of the `ansible-playbook` command and all the flags you can use when executing from the command line. They are the primary mechanism for running your Ansible Playbooks.
+
+image::../assets/images/job-templates-home-with-example-job-template.png[Job Templates list view in automation controller, opts="border"]
+
+---
+
+== Lab Guide: Hands-On Tasks
+
+In this challenge, you will explore the **Survey** feature. Surveys allow you to prompt for user input when a Job Template is launched, making it possible to change a parameter or setting for each run. You will use a survey to customize the `index.html` file deployed by the Apache playbook.
+
+[IMPORTANT]
+====
+Reminder that the credentials to log in to the automation controller are:
+
+* *Username:* `admin`
+* *Password:* `ansible123!`
+====
+
+=== Task 1: Create the Job Template
+
+First, you will create a new job template that uses a playbook designed to work with a survey variable.
+
+. **Navigate to the Templates page.**
 +
-image::../assets/job-templates-home-with-example-job-template.png[job-templates-home-with-example-job-template.png]
+In the left navigation menu, go to **Automation Execution** → **Templates**.
+
+. **Create a new job template.**
 +
-In controller, job templates are a visual representation of the `ansible-playbook` command and all flags you can utilize when executing from the command line.
+**Click** the blue **Create template** button and select **Create job template**.
 
-tabs:
+. **Enter the job template details.**
++
+Fill out the form with the following information:
++
+* **Name:** `Install Apache with Survey`
+* **Job Type:** `Run`
+* **Inventory:** `Lab-Inventory`
+* **Project:** `Apache playbooks`
+* **Playbook:** `apache_template.yml`
+* **Credentials:** Select `lab-credentials`.
+* **Privilege Escalation:** **Check** this box to enable `become`.
 
-* id: 1canvzbj49kg title: Automation controller type: service hostname: control path: / port: 443
-* id: bbrfdlsl0tya title: Node1 Web type: service hostname: node1 path: / port: 80 url: http://node1
-* id: 01awdhqcg2vi title: Terminal type: terminal hostname: control difficulty: "" timelimit: 600 enhanced_loading: null -- 📑 Creating a Job Template with a Survey ===
+. **Save the job template.**
++
+Leave all other fields as they are and **click** the blue **Create job template** button.
 
-In this challenge, we will explore the *Survey* feature, which allows us to input a variable at runtime when we execute our *Job Template* (playbook), making it possible to change a parameter or setting at each run.
-We will be changing the index.html we deployed previously for a new one, so you can see the results in real time.
+=== Task 2: Create the Survey
 
-____
-[!IMPORTANT] Reminder that the credentials to login to AAP are:
+Now you will add a survey to the job template to ask for a user's name.
 
-* Username: `admin`
-* Password: `ansible123!`
-____
+. **Navigate to the Survey tab.**
++
+Once the Job Template is saved, you will be on its *Details* page. **Click** the **Survey** tab.
 
-= ☑️ Task 1 - Creation of the Job Template
+. **Create a new survey question.**
++
+**Click** the blue **Create survey question** button.
 
-. Click the *Templates* link in the *Automation Execution* section of the sidebar
-. Click the *Create template* dropdown button and select *Create job template*
-. *Name* the Job Template as `Install Apache with Survey`
-. For the *Job Type* field, leave the default: *Run*
-. For the *Inventory* field, select `Lab-Inventory` from the dropdown
-. For the *Project* field, select `Apache playbooks` from the dropdown
-. For the *Playbook*  field, you will notice that the dropdown it's auto populated with all the playbooks available in the *Project* repository we selected.
-Choose the `apache_template.yml` playbook.
-. For the *Credentials* field,  select `lab-credentials` from the dropdown and click outside the box to save.
-. Tick the *Privilege escalation* checkbox at the bottom
-. Leave all the other fields the same and click the blue *Create job template* at the bottom.
+. **Configure the survey question.**
++
+Fill out the form with the following details:
++
+--
+* **Question:** `What is your name, fellow student?`
+* **Description:** `Enter your name or nickname to see it work!`
+* **Answer variable name:** `student_name`
+* **Answer type:** `Text` (default)
+* **Required:** Make sure this is **NOT** checked.
+* **Default answer:** `Skippy`
+--
 
-= ☑️ Task 2 - Create the Survey for the Job Template
+. **Save the survey question.**
++
+**Click** the blue **Create survey question** button at the bottom.
 
-. Once the *Job Template* is saved, you should be taken to the _Details_ tab of it
-. Look for the *Survey* tab and click on it.
-. Click the *Create survey question* button
-. In the *Question* field, enter `What is your name, fellow student?`
-. In the *Description* field, enter `Enter your name or nickname to see it work!`
-. In the *Answer variable name*, enter `student_name`
-. Leave the *Answer type* as is, `text`
-. Make sure *Required* is *NOT* ticked.
-. Leave minimum and maximum lengh as they are.
-. In the *Default answer* type `Skippy`
-. Press the *Create survey question* button at the bottom
-. Now the *Survey* tab should show a list with the one we created
-. Notice there is a toggle that reads *Survey disabled*, next to the _Create survey question_ button now.
-. Click the toggle  to *Enable* the survey
+. **Enable the survey.**
++
+On the Survey tab, you will now see a toggle that reads **Survey disabled**. **Click** this toggle to **enable** the survey.
 
-= ☑️ Task 3 - Launch the new Template
+=== Task 3: Launch the Template and Use the Survey
 
-. Click the *Launch template* button at the top of the "Install Apache with Survey" Job Template screen
-. Delete Skippy from the *What is your name, fellow student?* field and enter your name
-. Click the *Next* button
-. Review and press the *Finish* button to launch the Job Template
-. Verify the execution was successful by visiting the *Node1 Web* tab in the top left of the screen, you should see the Apache message with your name below!
-. Don't see the message?
-Click the refresh arrow!
-image:../assets/May-13-2025_at_21.04.19-image.png[May-13-2025_at_21.04.19-image.png]
+Finally, launch the template and provide a custom value through the survey.
 
-= 🎉 Congratulations!
+. **Launch the template.**
++
+**Click** the **Launch template** button at the top of the `Install Apache with Survey` job template screen.
 
-You have finished the lab successfully!
+. **Answer the survey question.**
++
+A survey prompt will appear. **Delete** the default answer (`Skippy`) and **enter your own name**.
 
-____
-[!IMPORTANT] Remember to press the green *Check*, *Next* or *Skip* button below to complete the laboratory, rate and review it, we appreciate all the feedback!
-____
+. **Launch the job.**
++
+**Click** the **Next** button, review the details, and then **click** the **Finish** button to launch the job.
 
-Scan  the following QR to claim your Ansible Forum badge for completing the lab:
+. **Verify the result.**
++
+Once the job completes successfully, **navigate** to the **Node1 Web** tab at the top of the lab screen. You may need to refresh the page. You should see the Apache message with your name displayed below it!
++
+image:../assets/images/May-13-2025_at_21.04.19-image.png[Customized Apache welcome page, opts="border"]
 
-image::../assets/May-13-2025_at_21.28.27-image.png[May-13-2025_at_21.28.27-image.png]
+---
 
-If you don't have an Ansible Forum account yet, no worries!
-You can sign-up with the same link and get it automatically.
-If you want to keep it simple, you can login with your Google or GitHub account by using oauth  and it will auto-create the account.
-No password or email needed this way.
+== Congratulations!
 
-Remember to introduce yourself https://forum.ansible.com/t/introduce-yourself-2025-edition/39892[in this Forum topic] once you sign-up!
+You have finished the lab successfully! 🎉
 
-If you don't have an Ansible Forum account yet, no worries!
-You can sign-up with the same link and get the badge automatically.
-If you want to keep it simple, you can register/login with your Google or GitHub account by using _oauth_  and it will auto-create the account.
-No password or email needed this way.
+[IMPORTANT]
+====
+Remember to press the green **Check**, **Next**, or **Skip** button below to complete the lab. We appreciate all feedback!
+====
 
-Introduce yourself https://forum.ansible.com/t/introduce-yourself-2025-edition/39892[in this Forum topic] once you sign-up!
+=== Claim Your Badge
 
-= 🐛 Encountered an issue?
+Scan the following QR code to claim your Ansible Forum badge for completing the lab:
 
-If you have encountered an issue or have noticed something not quite right, please https://github.com/ansible/instruqt/issues/new?labels=intro-to-controller&title=Issue+with+Intro+to+Controller+slug+ID:+controller-101-template&assignees=leogallego[open an issue].
+image::../assets/May-13-2025_at_21.28.27-image.png[QR code for Ansible Forum badge, opts="border"]
+
+If you don't have an Ansible Forum account yet, no worries! You can sign up using the same link. To keep it simple, you can register or log in with your Google or GitHub account, and an account will be created for you automatically.
+
+Once you sign up, remember to introduce yourself in link:https://forum.ansible.com/t/introduce-yourself-2025-edition/39892[this Forum topic]!
+
+---
+
+== Troubleshooting
+
+If you have encountered an issue or have noticed something not quite right, please link:https://github.com/ansible/instruqt/issues/new?labels=intro-to-controller&title=Issue+with+Intro+to+Controller+slug+ID:+controller-101-template&assignees=leogallego[open an issue on GitHub].
