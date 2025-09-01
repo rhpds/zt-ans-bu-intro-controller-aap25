@@ -1,62 +1,83 @@
-:doctype: book
+= Lab Guide: Creating Your First Project
+:notoc:
+:toc-title: Table of Contents
+:sectnums:
+:icons: font
 
-'''
+_A guide to importing your first Ansible Playbooks into the automation controller using Projects._
 
-slug: controller-101-project id: jlenekrvxljq type: challenge title: 1.2 - Creating your first Project teaser: Let's import our first playbooks into automation controller notes:
+---
 
-* type: text contents: |-   # Projects
+== Lab Briefing
+
+A **Project** is a logical collection of Ansible Playbooks. You can manage playbooks by placing them into a source code management (SCM) system supported by the automation controller, such as Git, Subversion, or even Red Hat Insights.
+
+image::../assets/images/projects-list-all.png[Projects list view in automation controller, opts="border"]
+
+---
+
+== Lab Guide: Hands-On Tasks
+
+A **Project** in the automation controller is a way to import one or more Ansible Playbooks (and their related roles and content) from a directory. While the automation controller doesn't allow you to create or edit playbooks through the web UI, it uses Projects to import them from a source like a Git repository.
+
+In this challenge, you will create your first Project, which will import a GitHub repository containing a few simple Apache playbooks.
+
+[IMPORTANT]
+====
+The credentials for the automation controller are:
+
+* *Username:* `admin`
+* *Password:* `ansible123!`
+====
+
+=== Task 1: Create the Project
+
+First, you will create a new project that points to a public Git repository.
+
+. **Navigate to the Projects page.**
 +
-image::../assets/projects-list-all.png[projects-list-all.png]
+In the left navigation menu, go to **Automation Execution** → **Projects**.
+
+. **Create a new project.**
 +
-You can manage playbooks on your server, or by placing your playbooks into a source code management (SCM) system supported by automation controller, including Git, Subversion, and Red Hat Insights.
-tabs:
+**Click** the blue **Create project** button.
 
-* id: yfsnc9ewjzq9 title: Automation controller type: service hostname: control path: / port: 443
-* id: lzencg90bpju title: Terminal type: terminal hostname: control difficulty: "" timelimit: 600 enhanced_loading: null --  💡 1.2 - Projects ===
-
-A *Project* in Ansible automation controller is one or more Ansible playbooks (and related roles, etc.) inside a directory.
-Usually, they are in a Source Control Management system like a *git* repository.
-
-We use *Projects* to "_import_" our playbooks into automation controller.
-These playbooks might be in a source control management (SCM) like Git (in Github or Gitlab for ex.) or locally.
-Automation controller doesn't allow us to create or edit playbooks through the web-UI, we can only "_import_" them into *Projects* which we later run through the Job Templates feature, which we will review further ahead.
-
-In this challenge, you will create your first *Project* which will import a GitHub repository with a few Apache playbooks.
-This playbook installs the Apache webserver, starts the service and copies an index.html file.
-
-____
-[!IMPORTANT] The credentials for AAP are:
-
-* Username: `admin`
-* Password: `ansible123!`
-____
-
-= ☑️ Task 1 - Creation of the Project
-
-. Expand the *Automation Execution* section in the sidebar menu
-. Click the *Projects* link in the menu
-. Click the *Create project* button
-. *Name* the Project as `Apache playbooks`
-. For the *Organization* field, select `Default` in the dropdown
-. For the *Source Control Type* dropdown, select *Git*, this will enable new fields below.
-. For the *Source Control URL* field copy & paste the following URL:
+. **Enter the project details.**
 +
+Fill out the form with the following information:
++
+* **Name:** `Apache playbooks`
+* **Organization:** `Default`
+* **Source Control Type:** `Git`
+* **Source Control URL:**
++
+[source,text]
 ----
-  https://github.com/leogallego/instruqt-wyfp.git
+https://github.com/leogallego/instruqt-wyfp.git
 ----
 
-. Leave all the other fields the same and click *Create project*
+. **Save the project.**
++
+Leave all other fields as they are and **click** the blue **Create project** button.
 
-= ☑️ Task 2 - Verify the new Project synced successfully
+=== Task 2: Verify the Project Sync
 
-. After creating you should be taken to the *Details* tab of the new Project.
-. Verify that the *Status* for our `Apache playbooks` project is green and reads *Success*
-. Click the *Success* text and review the output of the sync
+After creating the project, the automation controller automatically initiates a sync process to download the playbooks from the Git repository.
 
-= ✅ Next Challenge
+. **Check the project status.**
++
+After saving, you will be taken to the *Details* tab for the new project. **Verify** that the *Status* for your `Apache playbooks` project is green and reads **Successful**.
 
-Press the `Check` button below to go to the next challenge once you've completed the task.
+. **Review the sync output.**
++
+**Click** on the **Successful** status text to review the output of the sync job. This will show you the details of the Git clone process.
 
-= 🐛 Encountered an issue?
+---
 
-If you have encountered an issue or have noticed something not quite right, please https://github.com/ansible/instruqt/issues/new?labels=controller-101&title=Issue+with+Intro+to+Controller+slug+ID:+controller-101-project+AAP25&assignees=leogallego[open an issue].
+== Next Steps
+
+Press the `Check` button below to proceed to the next challenge.
+
+== Troubleshooting
+
+If you have encountered an issue or have noticed something not quite right, please link:https://github.com/ansible/instruqt/issues/new?labels=controller-101&title=Issue+with+Intro+to+Controller+slug+ID:+controller-101-project+AAP25&assignees=leogallego[open an issue on GitHub].
