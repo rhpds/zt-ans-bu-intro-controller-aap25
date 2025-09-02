@@ -12,28 +12,28 @@ antora:
       solveButton: false
     - name: module-03
       label: "Creating an Inventory"
-      solveButton: false
+      solveButton: true
     - name: module-04
       label: "Creating your first Project"
-      solveButton: false
+      solveButton: true
     - name: module-05
       label: "Get to know Credentials"
-      solveButton: false
+      solveButton: true
     - name: module-06
       label: "Creating a Job Template"
-      solveButton: false
+      solveButton: true
     - name: module-07
       label: "Creating a second Project"
-      solveButton: false
+      solveButton: true
     - name: module-08
       label: "Creating a second and third Job Template"
-      solveButton: false
+      solveButton: true
     - name: module-09
       label: "Creating a Workflow Job Tempalte"
-      solveButton: false
+      solveButton: true
     - name: module-10
       label: "Creating a Job Template with a Survey"
-      solveButton: false
+      solveButton: true
 
 
 tabs:
