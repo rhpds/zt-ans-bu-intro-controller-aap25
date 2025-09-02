@@ -11,6 +11,8 @@ nmcli connection add type ethernet con-name enp2s0 ifname enp2s0 ipv4.addresses 
 nmcli connection up enp2s0
 echo "192.168.1.10 control.lab control controller" >> /etc/hosts
 
+su - rhel -c 'pip install ansible-navigator'
+
 echo "%rhel ALL=(ALL:ALL) NOPASSWD:ALL" > /etc/sudoers.d/rhel_sudoers
 chmod 440 /etc/sudoers.d/rhel_sudoers
 echo "Checking SSH keys for rhel user..."
