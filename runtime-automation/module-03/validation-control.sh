@@ -12,12 +12,12 @@ export ANSIBLE_STDOUT_CALLBACK="community.general.yaml"
 
 ## Check all
 
-CMDALL="ANSIBLE_COLLECTIONS_PATH=/tmp/ansible-automation-platform-containerized-setup-bundle-2.5-9-x86_64/collections/:/root/.ansible/collections/ansible_collections/ ansible-playbook -i /tmp/inventory /tmp/setup.yml --tags check-inventory-all'"
+CMDALL="su --login rhel -c '/home/rhel/.local/bin/ansible-navigator run ANSIBLE_COLLECTIONS_PATH=/tmp/ansible-automation-platform-containerized-setup-bundle-2.5-9-x86_64/collections/:/root/.ansible/collections/ansible_collections/ ansible-playbook -i /tmp/inventory /tmp/setup.yml --tags check-inventory-all'"
 
 
 ## Check $INVENTORY exists.
 
-CMDINV="ANSIBLE_COLLECTIONS_PATH=/tmp/ansible-automation-platform-containerized-setup-bundle-2.5-9-x86_64/collections/:/root/.ansible/collections/ansible_collections/ ansible-playbook -i /tmp/inventory /tmp/setup.yml --tags check-inventory --mode stdout'"
+CMDINV="su --login rhel -c '/home/rhel/.local/bin/ansible-navigator run ANSIBLE_COLLECTIONS_PATH=/tmp/ansible-automation-platform-containerized-setup-bundle-2.5-9-x86_64/collections/:/root/.ansible/collections/ansible_collections/ ansible-playbook -i /tmp/inventory /tmp/setup.yml --tags check-inventory --mode stdout'"
 
 if ! eval "$CMDINV"; then
   echo "FAIL: ${INVENTORY} inventory not found. Remember it's case-sensitive! Please try again."
