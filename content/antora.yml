@@ -6,7 +6,7 @@ nav:
 
 asciidoc:
   attributes:
-    lab_name: "I'm the lab_name var"
+    lab_name: "Introduction to Ansible Automation Controller 2.5"
     release-version: master
     page-pagination: true
     my_var: "foo"
