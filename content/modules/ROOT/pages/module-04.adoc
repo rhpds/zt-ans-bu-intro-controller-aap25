@@ -53,7 +53,7 @@ Fill out the form with the following information:
 +
 [source,text]
 ----
-https://github.com/leogallego/instruqt-wyfp.git
+https://github.com/ansible-tmm/instruqt-wyfp.git
 ----
 
 . **Save the project.**
