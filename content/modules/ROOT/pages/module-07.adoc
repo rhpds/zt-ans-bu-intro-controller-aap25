@@ -51,7 +51,7 @@ Fill out the form with the following information:
 +
 [source,text]
 ----
-https://github.com/leogallego/instruqt-wyfp-additional.git
+https://github.com/ansible-tmm/instruqt-wyfp-additional.git
 ----
 
 . **Save the project.**
