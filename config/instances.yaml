@@ -134,7 +134,7 @@ virtualmachines:
           uEOWpQhGYHMC0A==
           -----END CERTIFICATE-----
           
-  - name: "node01"
+  - name: "node1"
     image: "rhel-9.5"
     memory: "2G"
     cores: 2
@@ -145,16 +145,16 @@ virtualmachines:
     networks:
       - default
     services:
-      - name: node01-http
+      - name: node1-http
         ports:
           - port: 80
             protocol: TCP
             targetPort: 80
             name: node01
     routes:
-      - name: node01-web
-        host: node01
-        service: node01-http
+      - name: node1-web
+        host: node1
+        service: node1-http
         targetPort: 80
         tls: true  ## To resolve https/http Framing
         tls_termination: Edge ## To resolve https/http Framing 
@@ -168,7 +168,7 @@ virtualmachines:
         - systemctl reload sshd
 
         
-  - name: "node02"
+  - name: "node2"
     image: "rhel-9.5"
     memory: "2G"
     cores: 2
@@ -179,16 +179,16 @@ virtualmachines:
     networks:
       - default
     services:
-      - name: node02-http
+      - name: node2-http
         ports:
           - port: 80
             protocol: TCP
             targetPort: 80
-            name: node02
+            name: node2
     routes:
-      - name: node02-web
-        host: node02
-        service: node02-http
+      - name: node2-web
+        host: node2
+        service: node2-http
         targetPort: 80
         tls: true  ## To resolve https/http Framing
         tls_termination: Edge ## To resolve https/http Framing
@@ -201,7 +201,7 @@ virtualmachines:
         - echo "PasswordAuthentication yes" > /etc/ssh/sshd_config.d/50-cloud-init.conf
         - systemctl reload sshd
         
-  - name: "node03"
+  - name: "node3"
     image: "rhel-9.5"
     memory: "2G"
     cores: 2
