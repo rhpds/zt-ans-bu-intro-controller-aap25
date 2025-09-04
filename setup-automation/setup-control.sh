@@ -222,7 +222,8 @@ tee /tmp/setup.yml << EOL
         credential_type: Machine
         organization: Default
         inputs:
-          username: rhel 
+          username: rhel
+          password: ansible123!
           ssh_key_data: "{{ lookup('file', '/home/rhel/.ssh/id_rsa' ) }}"
       tags:
         - solve-credentials
