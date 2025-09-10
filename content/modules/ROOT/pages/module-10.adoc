@@ -1,7 +1,7 @@
 = Lab Guide: Creating a Job Template with a Survey
 :notoc:
 :toc-title: Table of Contents
-:sectnums:
+:nosectnums:
 :icons: font
 
 _A guide to creating a fourth Job Template for installing Apache, this time including a Survey to pass variables at runtime._
