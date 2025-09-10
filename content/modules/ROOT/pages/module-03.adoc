@@ -16,11 +16,11 @@ This section provides an overview of inventories in Ansible Automation Platform.
 
 An **inventory** defines the hosts and groups of hosts upon which commands, modules, and tasks in a playbook operate. It is the fundamental way that Ansible and the automation controller keep track of what systems to manage.
 
-image::../assets/images/Oct-16-2024_at_02.39.15-image.png[Inventories list view in automation controller, opts="border"]
+image::Oct-16-2024_at_02.39.15-image.png[Inventories list view in automation controller, opts="border"]
 
 In this challenge, you will be creating a new inventory, adding hosts to it, and then creating a group to organize those hosts.
 
-image::../assets/images/Oct-16-2024_at_02.39.47-image.png[Creating a new inventory, opts="border"]
+image::Oct-16-2024_at_02.39.47-image.png[Creating a new inventory, opts="border"]
 
 ---
 
