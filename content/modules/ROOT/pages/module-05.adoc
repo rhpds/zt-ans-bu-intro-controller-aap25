@@ -12,7 +12,7 @@ _A guide to checking the authentication options of automation controller by expl
 
 **Credentials** are used for authentication when launching jobs against machines, synchronizing with inventory sources, and importing project content from a version control system.
 
-image::../assets/images/credentials-demo-edit-details.png[Details of a machine credential, opts="border"]
+image::credentials-demo-edit-details.png[Details of a machine credential, opts="border"]
 
 ---
 
