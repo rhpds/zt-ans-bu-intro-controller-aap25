@@ -1,7 +1,7 @@
 = Lab Guide: Creating an Inventory
 :notoc:
 :toc-title: Table of Contents
-:sectnums:
+:nosectnums:
 :icons: font
 
 _A guide to managing hosts and groups the easy way by creating and populating an inventory in automation controller._
