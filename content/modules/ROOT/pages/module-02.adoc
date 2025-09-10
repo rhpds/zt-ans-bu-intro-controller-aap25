@@ -20,19 +20,19 @@ In the following chapter, you will learn about the web UI dashboard and explore 
 
 The **Overview** screen is the main dashboard. It shows a summary of your hosts, projects, and inventories, with each count being a direct link to the corresponding objects. Below the resource counts, you will find a Job Activity graph and a card-like summary of recent Jobs, Projects, and Inventories.
 
-image::../assets/images/Oct-16-2024_at_02.01.47-image.png[Automation controller overview dashboard, opts="border"]
+image::Oct-16-2024_at_02.01.47-image.png[Automation controller overview dashboard, opts="border"]
 
 === Automation Controller Jobs View
 
 You can access the **Jobs** view by clicking *Jobs* from the left navigation bar. This view shows all the jobs that have run, including project syncs, SCM updates, playbook runs, and more.
 
-image::../assets/images/ug-dashboard-jobs-view.png[Jobs view in automation controller, opts="border"]
+image::ug-dashboard-jobs-view.png[Jobs view in automation controller, opts="border"]
 
 === Schedules View
 
 You can access the **Schedules** view by clicking **Automation Execution** → **Schedules** in the left navigation menu. This view shows all scheduled jobs that are configured to launch on a regular basis. They can be used to launch jobs, sync inventory sources, and import project content from version control.
 
-image::../assets/images/Oct-16-2024_at_02.12.32-image.png[Schedules view in automation controller, opts="border"]
+image::Oct-16-2024_at_02.12.32-image.png[Schedules view in automation controller, opts="border"]
 
 ---
 
@@ -42,7 +42,7 @@ Welcome to the *Introduction to automation controller* lab. In the following cha
 
 The new unified UI has several sections, but for this lab, we will focus on the **Automation Execution (Automation controller)** view.
 
-image::../assets/images/Oct-16-2024_at_02.36.20-image.png[Automation Execution menu highlighted, opts="border"]
+image::Oct-16-2024_at_02.36.20-image.png[Automation Execution menu highlighted, opts="border"]
 
 The screen on the left shows the login page. Please log in with the following credentials to continue.
 
@@ -66,7 +66,7 @@ You will find the following sections:
 
 A new feature in Ansible Automation Platform 2.5 is a section with quick start guides and interactive how-tos, which is very useful for getting started right after an installation.
 
-image:../assets/images/Oct-16-2024_at_02.29.14-image.png[Quick start guides on the dashboard, opts="border"]
+image:Oct-16-2024_at_02.29.14-image.png[Quick start guides on the dashboard, opts="border"]
 
 Feel free to click on any of the titles or "View all" links to explore the corresponding sections.
 
