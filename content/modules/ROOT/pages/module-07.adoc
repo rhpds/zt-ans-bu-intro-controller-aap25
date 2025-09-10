@@ -1,7 +1,7 @@
 = Lab Guide: Creating a Second Project
 :notoc:
 :toc-title: Table of Contents
-:sectnums:
+:nosectnums:
 :icons: font
 
 _A guide to importing a second repository into a new project in the automation controller._
