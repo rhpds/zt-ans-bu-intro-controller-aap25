@@ -12,7 +12,7 @@ _A guide to importing a second repository into a new project in the automation c
 
 A **Project** is a logical collection of Ansible Playbooks. You can manage playbooks by placing them into a source code management (SCM) system supported by the automation controller, such as Git, Subversion, or even Red Hat Insights.
 
-image::../assets/images/projects-list-all.png[Projects list view in automation controller, opts="border"]
+image::projects-list-all.png[Projects list view in automation controller, opts="border"]
 
 ---
 
