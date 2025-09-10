@@ -12,7 +12,7 @@ _A guide to creating a fourth Job Template for installing Apache, this time incl
 
 In the automation controller, **job templates** are a visual representation of the `ansible-playbook` command and all the flags you can use when executing from the command line. They are the primary mechanism for running your Ansible Playbooks.
 
-image::../assets/images/job-templates-home-with-example-job-template.png[Job Templates list view in automation controller, opts="border"]
+image::job-templates-home-with-example-job-template.png[Job Templates list view in automation controller, opts="border"]
 
 ---
 
@@ -109,7 +109,7 @@ A survey prompt will appear. **Delete** the default answer (`Skippy`) and **ente
 +
 Once the job completes successfully, **navigate** to the **Node1 Web** tab at the top of the lab screen. You may need to refresh the page. You should see the Apache message with your name displayed below it!
 +
-image:../assets/images/May-13-2025_at_21.04.19-image.png[Customized Apache welcome page, opts="border"]
+image:May-13-2025_at_21.04.19-image.png[Customized Apache welcome page, opts="border"]
 
 ---
 
