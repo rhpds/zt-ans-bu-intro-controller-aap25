@@ -1,7 +1,7 @@
 = Lab Guide: Creating Multiple Job Templates
 :notoc:
 :toc-title: Table of Contents
-:sectnums:
+:nosectnums:
 :icons: font
 
 _A guide to creating a second and third Job Template to run different playbooks from your projects._
