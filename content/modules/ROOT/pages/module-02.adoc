@@ -1,7 +1,7 @@
 = Lab Guide: Introduction to Automation Controller
 :notoc:
 :toc-title: Table of Contents
-:sectnums:
+:nosectnums:
 :icons: font
 
 _An introduction to the automation controller web UI, including the dashboard, inventories, projects, and job templates._
