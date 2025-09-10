@@ -16,7 +16,7 @@ The **Overview** screen is the main dashboard of the automation controller. It s
 
 We will go through all of these sections in the upcoming challenges.
 
-image::../assets/images/Oct-16-2024_at_02.01.47-image.png[Automation controller overview dashboard, opts="border"]
+image::Oct-16-2024_at_02.01.47-image.png[Automation controller overview dashboard, opts="border"]
 
 ---
 
@@ -26,7 +26,7 @@ Before we begin, here are some basic tips to improve your lab experience:
 
 . The **instructions sidebar** (where you are reading this) can be resized by dragging its border or can be completely collapsed by clicking the "Hide instructions" button at the top. This is useful if you need extra space for the main panel.
 +
-image:../assets/images/image.png[Collapsing and expanding the instructions sidebar, opts="border"]
+image:image.png[Collapsing and expanding the instructions sidebar, opts="border"]
 
 . When you finish a challenge, you must click the green **Check** (or **Next**) button at the bottom of the instructions to proceed.
 
