@@ -12,7 +12,7 @@ _A guide to connecting all the dots by linking multiple playbooks with condition
 
 A **workflow job template** links together different resources in a graphical way. This can include multiple job templates (playbooks), project syncs, and even other workflows, allowing you to build complex, multi-step automation processes.
 
-image::../assets/images/wf-templates-home-with-example-wf-template.png[Workflow Job Templates list view, opts="border"]
+image::wf-templates-home-with-example-wf-template.png[Workflow Job Templates list view, opts="border"]
 
 ---
 
