@@ -1,7 +1,7 @@
 = Lab Guide: Understanding Credentials
 :notoc:
 :toc-title: Table of Contents
-:sectnums:
+:nosectnums:
 :icons: font
 
 _A guide to checking the authentication options of automation controller by exploring the Credentials section._
