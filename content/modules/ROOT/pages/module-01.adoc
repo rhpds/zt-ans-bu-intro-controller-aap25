@@ -1,7 +1,7 @@
 = Welcome to Ansible Automation Platform Interactive Labs
 :notoc:
 :toc-title: Table of Contents
-:sectnums:
+:nosectnums:
 :icons: font
 
 Welcome! In this lab, we will explore the web-based user interface (web UI) of the Ansible Automation Platform's **automation controller**.
