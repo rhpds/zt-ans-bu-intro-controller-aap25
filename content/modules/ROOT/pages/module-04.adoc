@@ -1,7 +1,7 @@
 = Lab Guide: Creating Your First Project
 :notoc:
 :toc-title: Table of Contents
-:sectnums:
+:nosectnums:
 :icons: font
 
 _A guide to importing your first Ansible Playbooks into the automation controller using Projects._
