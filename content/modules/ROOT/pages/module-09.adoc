@@ -1,7 +1,7 @@
 = Lab Guide: Creating a Workflow Job Template
 :notoc:
 :toc-title: Table of Contents
-:sectnums:
+:nosectnums:
 :icons: font
 
 _A guide to connecting all the dots by linking multiple playbooks with conditional logic in a workflow._
