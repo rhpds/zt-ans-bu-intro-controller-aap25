@@ -1,7 +1,7 @@
 = Lab Guide: Creating a Job Template
 :notoc:
 :toc-title: Table of Contents
-:sectnums:
+:nosectnums:
 :icons: font
 
 _A guide to running a playbook with the automation controller by creating and launching a Job Template._
