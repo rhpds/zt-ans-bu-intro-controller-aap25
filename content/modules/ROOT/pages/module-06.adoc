@@ -107,6 +107,7 @@ In the tab bar at the top of your lab screen, **click** the **Node1 Web** tab an
 
 Press the `Check` button below to proceed to the next challenge.
 
+
 == Troubleshooting
 
-If you have encountered an issue or have noticed something not quite right, please link:https://github.com/ansible/instruqt/issues/new?labels=intro-to-controller&title=Issue+with+Intro+to+Controller+slug+ID:+controller-101-template&assignees=leogallego[open an issue on GitHub].
+If you have encountered an issue or have noticed something not quite right, please link:https://github.com/ansible/workshops/issues/new?labels=ansibe-builder&title=Issue+with+Getting+started+with+Automation-Controller&assignees=amoyament[open an issue on GitHub].
