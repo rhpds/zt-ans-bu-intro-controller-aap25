@@ -100,6 +100,8 @@ Click on the **Demo Project** that comes pre-loaded. Examine the different field
 
 Press the `Next` button below to proceed to the next challenge.
 
+
 == Troubleshooting
 
-If you have encountered an issue or have noticed something not quite right, please link:https://github.com/ansible/instruqt/issues/new?labels=controller-101&title=Issue+with+controller-101-dashboard+AAP25&assignees=leogallego[open an issue on GitHub].
+If you have encountered an issue or have noticed something not quite right, please link:https://github.com/ansible/workshops/issues/new?labels=ansibe-builder&title=Issue+with+Getting+started+with+Automation-Controller&assignees=amoyament[open an issue on GitHub].
+
