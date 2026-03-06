@@ -89,7 +89,7 @@ Notice that the *SSH Private Key* field only allows you to **Reset** the value. 
 
 == Next Steps
 
-Press the `Check` button below to proceed to the next challenge.
+Press the "Next" button below to proceed to the next challenge.
 
 == Troubleshooting
 
