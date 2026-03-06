@@ -83,7 +83,7 @@ b. **Click** on the **Successful** status text to review the output of the sync 
 
 == Next Steps
 
-Press the `Check` button below to proceed to the next challenge.
+Press the "Next" button below to proceed to the next challenge.
 
 
 == Troubleshooting
