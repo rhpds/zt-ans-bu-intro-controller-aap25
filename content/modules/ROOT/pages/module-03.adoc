@@ -125,7 +125,7 @@ You should now see both `node1` and `node2` listed in the *Hosts* tab for the `w
 
 == Next Steps
 
-Press the `Check` button below to proceed to the next challenge.
+Press the "Next" button below to proceed to the next challenge.
 
 == Troubleshooting
 
