@@ -105,7 +105,7 @@ In the tab bar at the top of your lab screen, **click** the **Node1 Web** tab an
 
 == Next Steps
 
-Press the `Check` button below to proceed to the next challenge.
+Press the "Next" button below to proceed to the next challenge.
 
 
 == Troubleshooting
