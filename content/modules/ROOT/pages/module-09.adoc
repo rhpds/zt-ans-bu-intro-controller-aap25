@@ -152,7 +152,7 @@ You can also launch the workflow by navigating back to the **Templates** page an
 
 == Next Steps
 
-Press the `Check` button below to proceed to the next challenge.
+Press the `Next` button below to proceed to the next challenge.
 
 
 == Troubleshooting
