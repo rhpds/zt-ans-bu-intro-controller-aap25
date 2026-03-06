@@ -135,7 +135,7 @@ The job should complete with a **Successful** status.
 
 == Next Steps
 
-Press the `Check` button below to proceed to the next challenge.
+Press the `Next` button below to proceed to the next challenge.
 
 
 == Troubleshooting
