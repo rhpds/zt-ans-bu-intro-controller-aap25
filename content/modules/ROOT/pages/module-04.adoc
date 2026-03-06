@@ -76,7 +76,7 @@ After saving, you will be taken to the *Details* tab for the new project. **Veri
 
 == Next Steps
 
-Press the `Check` button below to proceed to the next challenge.
+Press the `Next` button below to proceed to the next challenge.
 
 
 == Troubleshooting
