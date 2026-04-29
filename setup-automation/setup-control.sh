@@ -109,7 +109,7 @@ su - $USER -c 'cp /home/$USER/ansible-navigator.yml /home/$USER/.ansible-navigat
 su - $USER -c 'cp /home/$USER/ansible-navigator.yml /home/$USER/ansible-files/ansible-navigator.yml'
 
 
-git clone https://github.com/ansible-tmm/controller-101.git /tmp/controller-101-2024
+git clone https://github.com/rhpds/summit-2026-ansible-tmm-controller-101.git /tmp/controller-101-2024
 
 
 # ## set inventory hosts for commandline ansible
@@ -240,7 +240,7 @@ tee /tmp/setup.yml << EOL
         organization: Default
         state: present
         scm_type: git
-        scm_url: https://github.com/ansible-tmm/instruqt-wyfp.git
+        scm_url: https://github.com/rhpds/summit-2026-ansible-tmm-instruqt-wyfp.git
       tags:
         - solve-project
         - solve-workflow
@@ -302,7 +302,7 @@ tee /tmp/setup.yml << EOL
         validate_certs: false
         state: present
         scm_type: git
-        scm_url: https://github.com/ansible-tmm/instruqt-wyfp-additional.git
+        scm_url: https://github.com/rhpds/summit-2026-ansible-tmm-instruqt-wyfp-additional.git
       tags:
         - solve-project2
         - solve-workflow
@@ -570,7 +570,7 @@ tee /tmp/setup.yml << EOL
         organization: Default
         state: present
         scm_type: git
-        scm_url: https://github.com/ansible-tmm/instruqt-wyfp.git
+        scm_url: https://github.com/rhpds/summit-2026-ansible-tmm-instruqt-wyfp.git
         controller_host: "https://localhost"
         controller_username: admin
         controller_password: ansible123!
@@ -609,7 +609,7 @@ tee /tmp/setup.yml << EOL
         organization: Default
         state: present
         scm_type: git
-        scm_url: https://github.com/ansible-tmm/instruqt-wyfp-additional.git
+        scm_url: https://github.com/rhpds/summit-2026-ansible-tmm-instruqt-wyfp-additional.git
         controller_host: "https://localhost"
         controller_username: admin
         controller_password: ansible123!
