@@ -53,7 +53,7 @@ Fill out the form with the following information:
 +
 [source,text]
 ----
-https://github.com/ansible-tmm/instruqt-wyfp.git
+https://github.com/rhpds/summit-2026-ansible-tmm-instruqt-wyfp.git
 ----
 
 . **Save the project.**
