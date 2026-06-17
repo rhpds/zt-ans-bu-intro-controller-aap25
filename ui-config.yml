@@ -45,7 +45,7 @@ tabs:
     url: https://node1-${guid}.${domain}/index.html
     modules:
      - module-06
-  - name: Node2 Web"
+  - name: "Node2 Web"
     url: https://node2-${guid}.${domain}/index.html
     modules:
      - module-06
