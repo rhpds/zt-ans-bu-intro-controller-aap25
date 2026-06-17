@@ -11,7 +11,7 @@ WORKFLOW="Your first workflow"
 HOSTS=(node1 node2)
 GROUP="web"
 #Ansible settings
-export ANSIBLE_STDOUT_CALLBACK="yaml"
+# export ANSIBLE_STDOUT_CALLBACK="yaml"
 ## Run --tags check-project 
 #CMD="su --login rhel -c '/home/rhel/.local/bin/ansible-navigator run /tmp/controller-101-setup.yml --mode stdout'"
 CMD1="ANSIBLE_COLLECTIONS_PATH=/tmp/ansible-automation-platform-containerized-setup-bundle-2.5-9-x86_64/collections/:/root/.ansible/collections/ansible_collections/ ansible-playbook -i /tmp/inventory /tmp/setup.yml --tags check-job_template2"
