@@ -41,6 +41,14 @@ tabs:
     url: https://control-${guid}.${domain}/
   - name: ">_ Terminal"
     url: /wetty
+  - name: "Node1 Web"
+    url: https://node1-${guid}.${domain}/index.html
+    modules:
+     - module-06
+  - name: "Node2 Web"
+    url: https://node2-${guid}.${domain}/index.html
+    modules:
+     - module-06
 
 
   # - name: Windows RDP
@@ -48,10 +56,6 @@ tabs:
   #   external: false
   # - name: ">_ control"
   #   url: /wetty
-  # - name: ">_ node01"
-  #   url: /wetty_node01
-  # - name: ">_ node02"
-  #   url: /wetty_node02
   # - name: ">_ node03"
   #   url: /wetty_node03
   # - name: Cloud (PoC)
