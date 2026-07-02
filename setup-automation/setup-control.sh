@@ -10,57 +10,38 @@ subscription-manager register --org=${SATELLITE_ORG} --activationkey=${SATELLITE
 systemctl stop systemd-tmpfiles-setup.service
 systemctl disable systemd-tmpfiles-setup.service
 
-
-nmcli connection add type ethernet con-name enp2s0 ifname enp2s0 ipv4.addresses 192.168.1.10/24 ipv4.method manual connection.autoconnect yes
-nmcli connection up enp2s0
 echo "192.168.1.10 control.lab control controller" >> /etc/hosts
 
 echo "%rhel ALL=(ALL:ALL) NOPASSWD:ALL" > /etc/sudoers.d/rhel_sudoers
 chmod 440 /etc/sudoers.d/rhel_sudoers
-echo "Checking SSH keys for rhel user..."
 
-RHEL_SSH_DIR="/home/rhel/.ssh"
-RHEL_PRIVATE_KEY="$RHEL_SSH_DIR/id_rsa"
-RHEL_PUBLIC_KEY="$RHEL_SSH_DIR/id_rsa.pub"
-
+# SSH keys for rhel user
+RHEL_PRIVATE_KEY="/home/rhel/.ssh/id_rsa"
 if [ -f "$RHEL_PRIVATE_KEY" ]; then
-    echo "SSH key already exists for rhel user: $RHEL_PRIVATE_KEY"
+    echo "SSH key already exists for rhel user"
 else
     echo "Creating SSH key for rhel user..."
     sudo -u rhel mkdir -p /home/rhel/.ssh
     sudo -u rhel chmod 700 /home/rhel/.ssh
     sudo -u rhel ssh-keygen -t rsa -b 4096 -m PEM -C "rhel@$(hostname)" -f /home/rhel/.ssh/id_rsa -N "" -q
     sudo -u rhel chmod 600 /home/rhel/.ssh/id_rsa*
-    
-    if [ -f "$RHEL_PRIVATE_KEY" ]; then
-        echo "SSH key created successfully for rhel user"
-    else
-        echo "Error: Failed to create SSH key for rhel user"
-    fi
 fi
 
-# ## ansible home
-mkdir /home/$USER/ansible
-## ansible-files dir
-mkdir /home/$USER/ansible-files
+# Ansible directories and config for rhel user
+mkdir -p /home/rhel/ansible /home/rhel/ansible-files
 
-# ## ansible.cfg
-echo "[defaults]" > /home/$USER/.ansible.cfg
-echo "inventory = /home/$USER/ansible-files/hosts" >> /home/$USER/.ansible.cfg
-echo "host_key_checking = False" >> /home/$USER/.ansible.cfg
+cat > /home/rhel/.ansible.cfg << 'EOF'
+[defaults]
+inventory = /home/rhel/ansible-files/hosts
+host_key_checking = False
+EOF
 
-# ## git setup
-git config --global user.email "rhel@example.com"
-git config --global user.name "Red Hat"
-su - $USER -c 'git config --global user.email "rhel@example.com"'
-su - $USER -c 'git config --global user.name "Red Hat"'
+# git setup
+su - rhel -c 'git config --global user.email "rhel@example.com"'
+su - rhel -c 'git config --global user.name "Red Hat"'
 
-
-# ## set ansible-navigator default settings
-# ## for the EE to work we need to pass env variables
-# ## TODO: controller_host doesnt resolve with control and 127.0.0.1
-# ## is interpreted within the EE
-su - $USER -c 'cat >/home/$USER/ansible-navigator.yml <<EOL
+# ansible-navigator settings
+cat > /home/rhel/ansible-navigator.yml << 'EOF'
 ---
 ansible-navigator:
   ansible:
@@ -87,16 +68,13 @@ ansible-navigator:
   mode: stdout
   playbook-artifact:
     save-as: /home/rhel/{playbook_name}-artifact-{time_stamp}.json
-EOL
-'
+EOF
 
-# ## copy navigator settings
-su - $USER -c 'cp /home/$USER/ansible-navigator.yml /home/$USER/.ansible-navigator.yml'
-su - $USER -c 'cp /home/$USER/ansible-navigator.yml /home/$USER/ansible-files/ansible-navigator.yml'
+cp /home/rhel/ansible-navigator.yml /home/rhel/.ansible-navigator.yml
+cp /home/rhel/ansible-navigator.yml /home/rhel/ansible-files/ansible-navigator.yml
 
-
-# ## set inventory hosts for commandline ansible
-su - $USER -c 'cat >/home/$USER/ansible-files/hosts <<EOL
+# Inventory hosts file
+cat > /home/rhel/ansible-files/hosts << 'EOF'
 [web]
 node1
 node2
@@ -106,26 +84,18 @@ node3
 
 [controller]
 control
+EOF
 
-EOL
-cat /home/$USER/ansible-files/hosts'
-## end inventory hosts
-
-# ## chown and chmod all files in rhel user home
-chown -R rhel:rhel /home/rhel/ansible
+chown -R rhel:rhel /home/rhel/ansible /home/rhel/ansible-files
 chmod 777 /home/rhel/ansible
-#touch /home/rhel/ansible-files/hosts
-chown -R rhel:rhel /home/rhel/ansible-files
 
-# ## Controller as Code (CaC) setup
-# Create venv with ansible-core 2.16.z (matches ee-supported-rhel9)
-# CaC files are copied to /tmp/controller-as-code/ by setup-automation/main.yml
-dnf install -y python3-pip python3.11 python3.11-pip
-python3.11 -m venv /tmp/cac-venv
-/tmp/cac-venv/bin/pip install --quiet --upgrade pip
-/tmp/cac-venv/bin/pip install --quiet "ansible-core~=2.16.0"
-/tmp/cac-venv/bin/ansible-galaxy collection install git+https://github.com/ansible/ansible.platform.git,2.7.20260630
-/tmp/cac-venv/bin/ansible-galaxy collection install infra.aap_configuration:==4.7.0
+# Controller as Code (CaC) setup
+# Use ansible bundled with AAP installation; install extra collections alongside it
+AAP_COLLECTIONS=/root/ansible-automation-platform-containerized-setup/collections/ansible_collections
+
+ansible-galaxy collection install git+https://github.com/ansible/ansible.platform.git,2.7.20260630 -p "$AAP_COLLECTIONS"
+ansible-galaxy collection install infra.aap_configuration:==4.7.0 -p "$AAP_COLLECTIONS"
 
 # Pre-create credentials so they exist before module-05
-/tmp/cac-venv/bin/ansible-playbook /tmp/controller-as-code/configure_controller_credentials.yml
+# CaC files are copied to /tmp/controller-as-code/ by setup-automation/main.yml
+ANSIBLE_COLLECTIONS_PATH="$AAP_COLLECTIONS" ansible-playbook /tmp/controller-as-code/configure_controller_credentials.yml
