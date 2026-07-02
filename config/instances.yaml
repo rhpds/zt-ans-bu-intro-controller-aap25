@@ -65,10 +65,10 @@ containers:
         tls_termination: Edge
 virtualmachines:
   - name: "control"
-    image: "base-zero-aap-2.5-container-ce"
-    memory: "16G"
+    image: "aap-27-base-ceh"
+    memory: "32G"
     cores: 4
-    image_size: "30Gi"
+    image_size: "50Gi"
    # disk_type: "scsi"
    # bootloader: "efi"
     tags:
@@ -82,7 +82,7 @@ virtualmachines:
       password: ansible123!
       chpasswd: { expire: False }
       runcmd:
-        - sed -i "s/PasswordAuthentication no/PasswordAuthentication yes/" /etc/ssh/sshd_config
+        - echo "PasswordAuthentication yes" > /etc/ssh/sshd_config.d/50-cloud-init.conf
         - systemctl reload sshd
     services:
       - name: control-https
@@ -98,6 +98,9 @@ virtualmachines:
         targetPort: 443
         tls: true
         tls_termination: reencrypt
+        # TODO: Replace this certificate with the one from the AAP 2.7 image.
+        # Boot the aap-27-base-ceh VM and extract the cert from /etc/tower/tower.cert
+        # or from the AAP web UI's TLS certificate.
         tls_destinationCACertificate: |
           -----BEGIN CERTIFICATE-----
           MIIF1jCCA76gAwIBAgIUBQZlbUZlOmMKhspO9U4/nTJAXAEwDQYJKoZIhvcNAQEL

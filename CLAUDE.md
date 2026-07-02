@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What This Is
 
-An RHDP (Red Hat Demo Platform) hands-on workshop teaching AAP Automation Controller 2.5 through 10 progressive modules. All Controller object management (inventories, credentials, projects, templates, workflows) is declarative YAML using **Controller as Code (CaC)** with the `infra.aap_configuration` collection.
+An RHDP (Red Hat Demo Platform) hands-on workshop teaching AAP Automation Controller 2.7 through 10 progressive modules. All Controller object management (inventories, credentials, projects, templates, workflows) is declarative YAML using **Controller as Code (CaC)** with the `infra.aap_configuration` collection.
 
 ## Lab Content Commands
 
@@ -107,8 +107,8 @@ Lab content is AsciiDoc under `content/modules/ROOT/pages/module-XX.adoc`, built
 ## Platform Config
 
 Lab infrastructure is defined in `config/`:
-- `instances.yaml` -- VMs (control with AAP 2.5, node1-3 as RHEL 9.5) and containers (Gitea)
+- `instances.yaml` -- VMs (control with AAP 2.7, node1-3 as RHEL 9.5) and containers (Gitea)
 - `networks.yaml` -- Network topology
 - `firewall.yaml` -- Firewall rules
 
-The control VM uses the `base-zero-aap-2.5-container-ce` image with 16G RAM / 4 cores. Managed nodes (node1-3) are RHEL 9.5 with 2G RAM / 2 cores each.
+The control VM uses the `aap-27-base-ceh` image with 32G RAM / 4 cores. Managed nodes (node1-3) are RHEL 9.5 with 2G RAM / 2 cores each.

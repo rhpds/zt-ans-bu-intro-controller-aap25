@@ -64,7 +64,7 @@ You will find the following sections:
 * **Projects:** A list of recently updated projects.
 * **Inventories:** A list of recently updated inventories.
 
-A new feature in Ansible Automation Platform 2.5 is a section with quick start guides and interactive how-tos, which is very useful for getting started right after an installation.
+Ansible Automation Platform 2.7 includes a section with quick start guides and interactive how-tos, which is very useful for getting started right after an installation.
 
 image:Oct-16-2024_at_02.29.14-image.png[Quick start guides on the dashboard, opts="border"]
 
