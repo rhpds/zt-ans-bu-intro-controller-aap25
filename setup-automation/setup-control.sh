@@ -93,7 +93,6 @@ chmod 777 /home/rhel/ansible
 # Use ansible bundled with AAP installation; install extra collections alongside it
 AAP_COLLECTIONS=/root/ansible-automation-platform-containerized-setup/collections/ansible_collections
 
-ansible-galaxy collection install git+https://github.com/ansible/ansible.platform.git,2.7.20260630 -p "$AAP_COLLECTIONS"
 ansible-galaxy collection install infra.aap_configuration:==4.7.0 -p "$AAP_COLLECTIONS"
 
 # Pre-create credentials so they exist before module-05
