@@ -98,9 +98,6 @@ virtualmachines:
         targetPort: 443
         tls: true
         tls_termination: reencrypt
-        # TODO: Replace this certificate with the one from the AAP 2.7 image.
-        # Boot the aap-27-base-ceh VM and extract the cert from /etc/tower/tower.cert
-        # or from the AAP web UI's TLS certificate.
         tls_destinationCACertificate: |
           -----BEGIN CERTIFICATE-----
           MIIF/TCCA+WgAwIBAgIUEdnLAM6OCyRs9fCbyBW6Xrb+iOYwDQYJKoZIhvcNAQEL
