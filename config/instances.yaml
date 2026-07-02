@@ -68,7 +68,7 @@ virtualmachines:
     image: "aap-27-base-ceh"
     memory: "32G"
     cores: 4
-    image_size: "50Gi"
+    image_size: "70Gi"
    # disk_type: "scsi"
    # bootloader: "efi"
     tags:
