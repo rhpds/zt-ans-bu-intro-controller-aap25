@@ -20,13 +20,13 @@ In the following chapter, you will learn about the web UI dashboard and explore 
 
 The **Overview** screen is the main dashboard. It shows a summary of your hosts, projects, and inventories, with each count being a direct link to the corresponding objects. Below the resource counts, you will find a Job Activity graph and a card-like summary of recent Jobs, Projects, and Inventories.
 
-image::Oct-16-2024_at_02.01.47-image.png[Automation controller overview dashboard, opts="border"]
+image::controller-dashboard.png[Automation controller overview dashboard, opts="border"]
 
 === Automation Controller Jobs View
 
 You can access the **Jobs** view by clicking *Jobs* from the left navigation bar. This view shows all the jobs that have run, including project syncs, SCM updates, playbook runs, and more.
 
-image::ug-dashboard-jobs-view.png[Jobs view in automation controller, opts="border"]
+image::jobs-view.png[Jobs view in automation controller, opts="border"]
 
 === Schedules View
 
