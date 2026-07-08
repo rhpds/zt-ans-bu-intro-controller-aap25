@@ -32,7 +32,7 @@ image::jobs-view.png[Jobs view in automation controller, opts="border"]
 
 You can access the **Schedules** view by clicking **Automation Execution** → **Schedules** in the left navigation menu. This view shows all scheduled jobs that are configured to launch on a regular basis. They can be used to launch jobs, sync inventory sources, and import project content from version control.
 
-image::Oct-16-2024_at_02.12.32-image.png[Schedules view in automation controller, opts="border"]
+image::schedules-view.png[Schedules view in automation controller, opts="border"]
 
 ---
 
