@@ -89,7 +89,7 @@ virtualmachines:
         ports:
           - port: 443
             protocol: TCP
-            targetPort: 8443
+            targetPort: 443
             name: control-https
     routes:
       - name: control-https
