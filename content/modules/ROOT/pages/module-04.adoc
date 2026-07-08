@@ -66,11 +66,11 @@ After creating the project, the automation controller automatically initiates a 
 
 . **Check the project status.**
 +
-After saving, you will be taken to the *Details* tab for the new project. **Verify** that the *Status* for your `Apache playbooks` project is green and reads **Successful**.
+After saving, you will be taken to the *Details* tab for the new project. **Verify** that the *Status* for your `Apache playbooks` project is green and reads **Success**.
 
 . **Review the sync output.**
 +
-**Click** on the **Successful** status text to review the output of the sync job. This will show you the details of the Git clone process.
+**Click** on the **Success** status text to review the output of the sync job. This will show you the details of the Git clone process.
 
 ---
 

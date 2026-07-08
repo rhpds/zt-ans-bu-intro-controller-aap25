@@ -18,7 +18,7 @@ antora:
       solveButton: true
     - name: module-05
       label: "5 - Get to know Credentials"
-      solveButton: true
+      solveButton: false
     - name: module-06
       label: "6 - Creating a Job Template"
       solveButton: true
