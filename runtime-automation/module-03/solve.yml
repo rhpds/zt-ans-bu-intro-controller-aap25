@@ -1,0 +1,204 @@
+---
+# solve.yml -- Module 03 (Creating an Inventory)
+# Creates: Lab-Inventory, node1, node2, web group, adds both hosts to group.
+
+- name: Log solve start
+  ansible.builtin.shell: echo "Solving module-03" >> /tmp/progress.log
+
+- name: Get Default organization ID
+  ansible.builtin.uri:
+    url: "{{ aap_host }}/api/controller/v2/organizations/?name=Default"
+    user: "{{ aap_username }}"
+    password: "{{ aap_password }}"
+    force_basic_auth: true
+    validate_certs: false
+  register: r_org
+
+- name: Check if Lab-Inventory exists
+  ansible.builtin.uri:
+    url: "{{ aap_host }}/api/controller/v2/inventories/?name=Lab-Inventory"
+    user: "{{ aap_username }}"
+    password: "{{ aap_password }}"
+    force_basic_auth: true
+    validate_certs: false
+  register: r_inventory_check
+
+- name: Create Lab-Inventory
+  ansible.builtin.uri:
+    url: "{{ aap_host }}/api/controller/v2/inventories/"
+    method: POST
+    user: "{{ aap_username }}"
+    password: "{{ aap_password }}"
+    force_basic_auth: true
+    validate_certs: false
+    body_format: json
+    body:
+      name: "Lab-Inventory"
+      organization: "{{ r_org.json.results[0].id | int }}"
+    status_code: [200, 201]
+  when: r_inventory_check.json.count == 0
+
+- name: Get Lab-Inventory ID
+  ansible.builtin.uri:
+    url: "{{ aap_host }}/api/controller/v2/inventories/?name=Lab-Inventory"
+    user: "{{ aap_username }}"
+    password: "{{ aap_password }}"
+    force_basic_auth: true
+    validate_certs: false
+  register: r_inventory
+
+- name: Set inventory_id
+  ansible.builtin.set_fact:
+    inventory_id: "{{ r_inventory.json.results[0].id | int }}"
+
+- name: Check if node1 exists
+  ansible.builtin.uri:
+    url: "{{ aap_host }}/api/controller/v2/hosts/?name=node1&inventory={{ inventory_id }}"
+    user: "{{ aap_username }}"
+    password: "{{ aap_password }}"
+    force_basic_auth: true
+    validate_certs: false
+  register: r_node1_check
+
+- name: Create node1
+  ansible.builtin.uri:
+    url: "{{ aap_host }}/api/controller/v2/hosts/"
+    method: POST
+    user: "{{ aap_username }}"
+    password: "{{ aap_password }}"
+    force_basic_auth: true
+    validate_certs: false
+    body_format: json
+    body:
+      name: "node1"
+      inventory: "{{ inventory_id | int }}"
+    status_code: [200, 201]
+  when: r_node1_check.json.count == 0
+
+- name: Check if node2 exists
+  ansible.builtin.uri:
+    url: "{{ aap_host }}/api/controller/v2/hosts/?name=node2&inventory={{ inventory_id }}"
+    user: "{{ aap_username }}"
+    password: "{{ aap_password }}"
+    force_basic_auth: true
+    validate_certs: false
+  register: r_node2_check
+
+- name: Create node2
+  ansible.builtin.uri:
+    url: "{{ aap_host }}/api/controller/v2/hosts/"
+    method: POST
+    user: "{{ aap_username }}"
+    password: "{{ aap_password }}"
+    force_basic_auth: true
+    validate_certs: false
+    body_format: json
+    body:
+      name: "node2"
+      inventory: "{{ inventory_id | int }}"
+    status_code: [200, 201]
+  when: r_node2_check.json.count == 0
+
+- name: Check if web group exists
+  ansible.builtin.uri:
+    url: "{{ aap_host }}/api/controller/v2/groups/?name=web&inventory={{ inventory_id }}"
+    user: "{{ aap_username }}"
+    password: "{{ aap_password }}"
+    force_basic_auth: true
+    validate_certs: false
+  register: r_group_check
+
+- name: Create web group
+  ansible.builtin.uri:
+    url: "{{ aap_host }}/api/controller/v2/groups/"
+    method: POST
+    user: "{{ aap_username }}"
+    password: "{{ aap_password }}"
+    force_basic_auth: true
+    validate_certs: false
+    body_format: json
+    body:
+      name: "web"
+      inventory: "{{ inventory_id | int }}"
+    status_code: [200, 201]
+  when: r_group_check.json.count == 0
+
+- name: Get web group ID
+  ansible.builtin.uri:
+    url: "{{ aap_host }}/api/controller/v2/groups/?name=web&inventory={{ inventory_id }}"
+    user: "{{ aap_username }}"
+    password: "{{ aap_password }}"
+    force_basic_auth: true
+    validate_certs: false
+  register: r_group
+
+- name: Set group_id
+  ansible.builtin.set_fact:
+    group_id: "{{ r_group.json.results[0].id | int }}"
+
+- name: Get node1 ID
+  ansible.builtin.uri:
+    url: "{{ aap_host }}/api/controller/v2/hosts/?name=node1&inventory={{ inventory_id }}"
+    user: "{{ aap_username }}"
+    password: "{{ aap_password }}"
+    force_basic_auth: true
+    validate_certs: false
+  register: r_node1
+
+- name: Get node2 ID
+  ansible.builtin.uri:
+    url: "{{ aap_host }}/api/controller/v2/hosts/?name=node2&inventory={{ inventory_id }}"
+    user: "{{ aap_username }}"
+    password: "{{ aap_password }}"
+    force_basic_auth: true
+    validate_certs: false
+  register: r_node2
+
+- name: Set host IDs
+  ansible.builtin.set_fact:
+    node1_id: "{{ r_node1.json.results[0].id | int }}"
+    node2_id: "{{ r_node2.json.results[0].id | int }}"
+
+- name: Check if node1 is in web group
+  ansible.builtin.uri:
+    url: "{{ aap_host }}/api/controller/v2/groups/{{ group_id }}/hosts/?name=node1"
+    user: "{{ aap_username }}"
+    password: "{{ aap_password }}"
+    force_basic_auth: true
+    validate_certs: false
+  register: r_node1_in_group
+
+- name: Add node1 to web group
+  ansible.builtin.uri:
+    url: "{{ aap_host }}/api/controller/v2/groups/{{ group_id }}/hosts/"
+    method: POST
+    user: "{{ aap_username }}"
+    password: "{{ aap_password }}"
+    force_basic_auth: true
+    validate_certs: false
+    body_format: json
+    body: "{{ {'id': node1_id | int} }}"
+    status_code: [200, 201, 204]
+  when: r_node1_in_group.json.count == 0
+
+- name: Check if node2 is in web group
+  ansible.builtin.uri:
+    url: "{{ aap_host }}/api/controller/v2/groups/{{ group_id }}/hosts/?name=node2"
+    user: "{{ aap_username }}"
+    password: "{{ aap_password }}"
+    force_basic_auth: true
+    validate_certs: false
+  register: r_node2_in_group
+
+- name: Add node2 to web group
+  ansible.builtin.uri:
+    url: "{{ aap_host }}/api/controller/v2/groups/{{ group_id }}/hosts/"
+    method: POST
+    user: "{{ aap_username }}"
+    password: "{{ aap_password }}"
+    force_basic_auth: true
+    validate_certs: false
+    body_format: json
+    body: "{{ {'id': node2_id | int} }}"
+    status_code: [200, 201, 204]
+  when: r_node2_in_group.json.count == 0
