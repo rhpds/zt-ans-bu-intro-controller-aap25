@@ -210,18 +210,6 @@
     status_code: [200, 201]
   register: r_ext_job
 
-- name: Wait for Extended services job to complete
-  ansible.builtin.uri:
-    url: "{{ aap_host }}/api/controller/v2/jobs/{{ r_ext_job.json.id }}/"
-    user: "{{ aap_username }}"
-    password: "{{ aap_password }}"
-    force_basic_auth: true
-    validate_certs: false
-  register: r_ext_job_status
-  until: r_ext_job_status.json.status in ['successful', 'failed', 'error', 'canceled']
-  retries: 30
-  delay: 10
-
 # Set motd template
 
 - name: Check if Set motd template exists
@@ -298,15 +286,3 @@
     body: {}
     status_code: [200, 201]
   register: r_motd_job
-
-- name: Wait for Set motd job to complete
-  ansible.builtin.uri:
-    url: "{{ aap_host }}/api/controller/v2/jobs/{{ r_motd_job.json.id }}/"
-    user: "{{ aap_username }}"
-    password: "{{ aap_password }}"
-    force_basic_auth: true
-    validate_certs: false
-  register: r_motd_job_status
-  until: r_motd_job_status.json.status in ['successful', 'failed', 'error', 'canceled']
-  retries: 30
-  delay: 10

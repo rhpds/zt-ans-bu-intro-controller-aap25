@@ -147,15 +147,3 @@
         student_name: "Skippy"
     status_code: [200, 201]
   register: r_job
-
-- name: Wait for job to complete
-  ansible.builtin.uri:
-    url: "{{ aap_host }}/api/controller/v2/jobs/{{ r_job.json.id }}/"
-    user: "{{ aap_username }}"
-    password: "{{ aap_password }}"
-    force_basic_auth: true
-    validate_certs: false
-  register: r_job_status
-  until: r_job_status.json.status in ['successful', 'failed', 'error', 'canceled']
-  retries: 30
-  delay: 10

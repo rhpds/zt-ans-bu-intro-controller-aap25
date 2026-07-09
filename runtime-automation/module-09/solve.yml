@@ -173,15 +173,3 @@
     body: {}
     status_code: [200, 201]
   register: r_wf_job
-
-- name: Wait for workflow to complete
-  ansible.builtin.uri:
-    url: "{{ aap_host }}/api/controller/v2/workflow_jobs/{{ r_wf_job.json.id }}/"
-    user: "{{ aap_username }}"
-    password: "{{ aap_password }}"
-    force_basic_auth: true
-    validate_certs: false
-  register: r_wf_status
-  until: r_wf_status.json.status in ['successful', 'failed', 'error', 'canceled']
-  retries: 60
-  delay: 15
