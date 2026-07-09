@@ -1,0 +1,58 @@
+---
+# validation.yml -- Module 09 (Creating a Workflow Job Template)
+# Checks: "Your first workflow" exists and has been successfully launched.
+
+- name: Log validation start
+  ansible.builtin.shell: echo "Validating module-09" >> /tmp/progress.log
+
+- name: Check Your first workflow exists
+  ansible.builtin.uri:
+    url: "{{ aap_host }}/api/controller/v2/workflow_job_templates/?name=Your+first+workflow"
+    user: "{{ aap_username }}"
+    password: "{{ aap_password }}"
+    force_basic_auth: true
+    validate_certs: false
+  register: r_wf
+
+- name: Set wf_id
+  ansible.builtin.set_fact:
+    wf_id: "{{ r_wf.json.results[0].id | default(0) | int }}"
+
+- name: Check for a successful workflow run
+  ansible.builtin.uri:
+    url: "{{ aap_host }}/api/controller/v2/workflow_jobs/?workflow_job_template={{ wf_id }}&status=successful"
+    user: "{{ aap_username }}"
+    password: "{{ aap_password }}"
+    force_basic_auth: true
+    validate_certs: false
+    status_code: [200, 404]
+  register: r_wf_jobs
+  when: r_wf.json.count > 0
+
+- name: Set validation results
+  ansible.builtin.set_fact:
+    v_exists: "{{ r_wf.json.count > 0 }}"
+    v_job_run: "{{ (r_wf_jobs.json.count | default(0)) > 0 }}"
+
+- name: Set validation output
+  ansible.builtin.set_fact:
+    validation_output: |
+      Module 9 Validation
+      ===================
+      {{ '[OK]' if v_exists else '[X] ' }} Workflow: Your first workflow
+      {{ '[OK]' if v_job_run else '[X] ' }} Workflow launched successfully
+    validation_passed: "{{ v_exists and v_job_run }}"
+
+- name: Write failure details
+  ansible.builtin.copy:
+    content: "{{ validation_output }}"
+    dest: "{{ job_info_dir }}/validation_failure.out"
+  delegate_to: localhost
+  when:
+    - job_info_dir is defined
+    - not validation_passed | bool
+
+- name: Fail if not passed
+  ansible.builtin.fail:
+    msg: "Complete the missing tasks and try again."
+  when: not validation_passed | bool

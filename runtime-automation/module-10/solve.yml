@@ -1,0 +1,161 @@
+---
+# solve.yml -- Module 10 (Creating a Job Template with a Survey)
+# Creates: "Install Apache with Survey" job template with survey spec enabled.
+# Launches: The template with the default survey value and waits for completion.
+
+- name: Log solve start
+  ansible.builtin.shell: echo "Solving module-10" >> /tmp/progress.log
+
+- name: Get Lab-Inventory ID
+  ansible.builtin.uri:
+    url: "{{ aap_host }}/api/controller/v2/inventories/?name=Lab-Inventory"
+    user: "{{ aap_username }}"
+    password: "{{ aap_password }}"
+    force_basic_auth: true
+    validate_certs: false
+  register: r_inventory
+
+- name: Get Apache playbooks project ID
+  ansible.builtin.uri:
+    url: "{{ aap_host }}/api/controller/v2/projects/?name=Apache+playbooks"
+    user: "{{ aap_username }}"
+    password: "{{ aap_password }}"
+    force_basic_auth: true
+    validate_certs: false
+  register: r_project
+
+- name: Get lab-credentials ID
+  ansible.builtin.uri:
+    url: "{{ aap_host }}/api/controller/v2/credentials/?name=lab-credentials"
+    user: "{{ aap_username }}"
+    password: "{{ aap_password }}"
+    force_basic_auth: true
+    validate_certs: false
+  register: r_credential
+
+- name: Check if Install Apache with Survey template exists
+  ansible.builtin.uri:
+    url: "{{ aap_host }}/api/controller/v2/job_templates/?name=Install+Apache+with+Survey"
+    user: "{{ aap_username }}"
+    password: "{{ aap_password }}"
+    force_basic_auth: true
+    validate_certs: false
+  register: r_template_check
+
+- name: Create Install Apache with Survey job template
+  ansible.builtin.uri:
+    url: "{{ aap_host }}/api/controller/v2/job_templates/"
+    method: POST
+    user: "{{ aap_username }}"
+    password: "{{ aap_password }}"
+    force_basic_auth: true
+    validate_certs: false
+    body_format: json
+    body:
+      name: "Install Apache with Survey"
+      inventory: "{{ r_inventory.json.results[0].id | int }}"
+      project: "{{ r_project.json.results[0].id | int }}"
+      playbook: "apache_template.yml"
+      become_enabled: true
+      survey_enabled: false
+    status_code: [200, 201]
+  when: r_template_check.json.count == 0
+
+- name: Get Install Apache with Survey template ID
+  ansible.builtin.uri:
+    url: "{{ aap_host }}/api/controller/v2/job_templates/?name=Install+Apache+with+Survey"
+    user: "{{ aap_username }}"
+    password: "{{ aap_password }}"
+    force_basic_auth: true
+    validate_certs: false
+  register: r_template
+
+- name: Set template_id
+  ansible.builtin.set_fact:
+    template_id: "{{ r_template.json.results[0].id | int }}"
+
+- name: Check if lab-credentials is associated with template
+  ansible.builtin.uri:
+    url: "{{ aap_host }}/api/controller/v2/job_templates/{{ template_id }}/credentials/?name=lab-credentials"
+    user: "{{ aap_username }}"
+    password: "{{ aap_password }}"
+    force_basic_auth: true
+    validate_certs: false
+  register: r_cred_check
+
+- name: Associate lab-credentials with Install Apache with Survey
+  ansible.builtin.uri:
+    url: "{{ aap_host }}/api/controller/v2/job_templates/{{ template_id }}/credentials/"
+    method: POST
+    user: "{{ aap_username }}"
+    password: "{{ aap_password }}"
+    force_basic_auth: true
+    validate_certs: false
+    body_format: json
+    body: "{{ {'id': r_credential.json.results[0].id | int} }}"
+    status_code: [200, 201, 204]
+  when: r_cred_check.json.count == 0
+
+- name: Set survey spec
+  ansible.builtin.uri:
+    url: "{{ aap_host }}/api/controller/v2/job_templates/{{ template_id }}/survey_spec/"
+    method: POST
+    user: "{{ aap_username }}"
+    password: "{{ aap_password }}"
+    force_basic_auth: true
+    validate_certs: false
+    body_format: json
+    body:
+      name: "Apache Survey"
+      description: "Survey for Apache template deployment"
+      spec:
+        - question_name: "What is your name, fellow student?"
+          question_description: "Enter your name or nickname to see it work!"
+          variable: "student_name"
+          type: "text"
+          required: false
+          default: "Skippy"
+          min: 0
+          max: 1024
+          choices: ""
+    status_code: [200, 201]
+
+- name: Enable survey on template
+  ansible.builtin.uri:
+    url: "{{ aap_host }}/api/controller/v2/job_templates/{{ template_id }}/"
+    method: PATCH
+    user: "{{ aap_username }}"
+    password: "{{ aap_password }}"
+    force_basic_auth: true
+    validate_certs: false
+    body_format: json
+    body:
+      survey_enabled: true
+    status_code: [200]
+
+- name: Launch Install Apache with Survey using default value
+  ansible.builtin.uri:
+    url: "{{ aap_host }}/api/controller/v2/job_templates/{{ template_id }}/launch/"
+    method: POST
+    user: "{{ aap_username }}"
+    password: "{{ aap_password }}"
+    force_basic_auth: true
+    validate_certs: false
+    body_format: json
+    body:
+      extra_vars:
+        student_name: "Skippy"
+    status_code: [200, 201]
+  register: r_job
+
+- name: Wait for job to complete
+  ansible.builtin.uri:
+    url: "{{ aap_host }}/api/controller/v2/jobs/{{ r_job.json.id }}/"
+    user: "{{ aap_username }}"
+    password: "{{ aap_password }}"
+    force_basic_auth: true
+    validate_certs: false
+  register: r_job_status
+  until: r_job_status.json.status in ['successful', 'failed', 'error', 'canceled']
+  retries: 30
+  delay: 10
