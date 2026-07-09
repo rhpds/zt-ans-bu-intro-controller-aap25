@@ -1,6 +1,7 @@
 ---
 # validation.yml -- Module 06 (Creating a Job Template)
-# Checks: Install Apache job template exists with correct inventory, project, and credential.
+# Checks: Install Apache job template exists with correct inventory, project, and credential,
+# and that the job has been successfully launched at least once.
 
 - name: Log validation start
   ansible.builtin.shell: echo "Validating module-06" >> /tmp/progress.log
@@ -29,6 +30,17 @@
   register: r_cred
   when: r_template.json.count > 0
 
+- name: Check for a successful Install Apache job run
+  ansible.builtin.uri:
+    url: "{{ aap_host }}/api/controller/v2/jobs/?job_template={{ template_id }}&status=successful"
+    user: "{{ aap_username }}"
+    password: "{{ aap_password }}"
+    force_basic_auth: true
+    validate_certs: false
+    status_code: [200, 404]
+  register: r_jobs
+  when: r_template.json.count > 0
+
 - name: Set validation results
   ansible.builtin.set_fact:
     v_exists: "{{ r_template.json.count > 0 }}"
@@ -36,6 +48,7 @@
     v_correct_project: "{{ r_template.json.results[0].summary_fields.project.name == 'Apache playbooks' if r_template.json.count > 0 else false }}"
     v_correct_playbook: "{{ r_template.json.results[0].playbook == 'apache.yml' if r_template.json.count > 0 else false }}"
     v_cred_linked: "{{ (r_cred.json.count | default(0)) > 0 }}"
+    v_job_run: "{{ (r_jobs.json.count | default(0)) > 0 }}"
 
 - name: Set validation output
   ansible.builtin.set_fact:
@@ -47,7 +60,8 @@
       {{ '[OK]' if v_correct_project else '[X] ' }} Project: Apache playbooks
       {{ '[OK]' if v_correct_playbook else '[X] ' }} Playbook: apache.yml
       {{ '[OK]' if v_cred_linked else '[X] ' }} Credential: lab-credentials
-    validation_passed: "{{ v_exists and v_correct_inventory and v_correct_project and v_correct_playbook and v_cred_linked }}"
+      {{ '[OK]' if v_job_run else '[X] ' }} Job launched successfully
+    validation_passed: "{{ v_exists and v_correct_inventory and v_correct_project and v_correct_playbook and v_cred_linked and v_job_run }}"
 
 - name: Write failure details
   ansible.builtin.copy:

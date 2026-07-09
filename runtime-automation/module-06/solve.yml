@@ -1,6 +1,7 @@
 ---
 # solve.yml -- Module 06 (Creating a Job Template)
 # Creates: Install Apache job template with Lab-Inventory, Apache playbooks, lab-credentials.
+# Launches: Install Apache job and waits for successful completion.
 
 - name: Log solve start
   ansible.builtin.shell: echo "Solving module-06" >> /tmp/progress.log
@@ -93,3 +94,28 @@
     body: "{{ {'id': r_credential.json.results[0].id | int} }}"
     status_code: [200, 201, 204]
   when: r_cred_check.json.count == 0
+
+- name: Launch Install Apache job
+  ansible.builtin.uri:
+    url: "{{ aap_host }}/api/controller/v2/job_templates/{{ template_id }}/launch/"
+    method: POST
+    user: "{{ aap_username }}"
+    password: "{{ aap_password }}"
+    force_basic_auth: true
+    validate_certs: false
+    body_format: json
+    body: {}
+    status_code: [200, 201]
+  register: r_job
+
+- name: Wait for Install Apache job to complete
+  ansible.builtin.uri:
+    url: "{{ aap_host }}/api/controller/v2/jobs/{{ r_job.json.id }}/"
+    user: "{{ aap_username }}"
+    password: "{{ aap_password }}"
+    force_basic_auth: true
+    validate_certs: false
+  register: r_job_status
+  until: r_job_status.json.status in ['successful', 'failed', 'error', 'canceled']
+  retries: 30
+  delay: 10
