@@ -114,7 +114,7 @@ Now, add a third step that also runs after the first step, in parallel with the 
 
 . **Add another linked step from the first node.**
 +
-**Hover** over the `apache101` node again, **click** the **+** icon, and select **Add node**.
+**Hover** over the `apache101` node, **click** the kebab menu, and select **Add step and link**.
 
 . **Configure the third node.**
 +

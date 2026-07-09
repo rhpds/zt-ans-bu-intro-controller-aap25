@@ -12,7 +12,7 @@ _A guide to creating a fourth Job Template for installing Apache, this time incl
 
 In this final challenge, you will explore one more powerful feature of Job Templates: **Surveys**. Surveys let you prompt users for input when launching a job, making it possible to customize parameters for each run — without editing the playbook itself.
 
-image::job-templates-home-with-example-job-template.png[Job Templates list view in automation controller, opts="border"]
+image::templates-view-example-templates[Job Templates list view in automation controller, opts="border"]
 
 ---
 
@@ -109,7 +109,7 @@ A survey prompt will appear. **Delete** the default answer (`Skippy`) and **ente
 +
 Once the job completes successfully, **navigate** to the **Node1 Web** tab at the top of the lab screen. You may need to refresh the page. You should see the Apache message with your name displayed below it!
 +
-image:May-13-2025_at_21.04.19-image.png[Customized Apache welcome page, opts="border"]
+image:validate-survey.png[Customized Apache welcome page, opts="border"]
 
 ---
 
@@ -195,7 +195,7 @@ Remember to press the blue **Next** button below to complete the lab. We appreci
 
 Scan the following QR code to claim your Ansible Forum badge for completing the lab:
 
-image::May-13-2025_at_21.28.27-image.png[QR code for Ansible Forum badge, opts="border"]
+image::badge-qr-code.png[QR code for Ansible Forum badge, opts="border"]
 
 If you don't have an Ansible Forum account yet, no worries! You can sign up using the same link. To keep it simple, you can register or log in with your Google or GitHub account, and an account will be created for you automatically.
 
