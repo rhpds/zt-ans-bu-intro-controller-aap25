@@ -71,7 +71,7 @@ After saving, you will be taken to the Workflow Visualizer, where you can build 
 
 . **Add the first step.**
 +
-**Click** the **Start** button to add the first node.
+**Click** the **Add step** button to add the first node.
 
 . **Configure the first node.**
 +
@@ -92,7 +92,7 @@ Next, you will add a second step that runs only if the first step is successful.
 
 . **Add a new linked step.**
 +
-**Hover** over the `apache101` node, **click** the **+** icon, and select **Add node**.
+**Hover** over the `apache101` node, **click** the kebab menu, and select **Add step and link**.
 
 . **Configure the second node.**
 +
