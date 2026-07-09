@@ -12,7 +12,7 @@ _A guide to connecting all the dots by linking multiple playbooks with condition
 
 So far, each Job Template runs a single playbook independently. A **Workflow Job Template** lets you connect multiple Job Templates into a single automated pipeline — with conditional logic, parallel execution, and error handling built in.
 
-image::wf-templates-home-with-example-wf-template.png[Workflow Job Templates list view, opts="border"]
+image::wf-template-example-list.png[Workflow Job Templates list view, opts="border"]
 
 ---
 
