@@ -12,7 +12,7 @@ _A guide to creating a second and third Job Template to run different playbooks 
 
 In this challenge, you will put your experience to work by creating two more **Job Templates**. Unlike the first one, these templates use playbooks from the `Additional playbooks` project and target different hosts and groups — including one that doesn't exist yet in your inventory. You will also troubleshoot a common issue: what happens when a playbook expects a host that isn't defined.
 
-image::job-templates-home-with-example-job-template.png[Job Templates list view in automation controller, opts="border"]
+image::templates-view-example-templates.png[Job Templates list view in automation controller, opts="border"]
 
 ---
 
