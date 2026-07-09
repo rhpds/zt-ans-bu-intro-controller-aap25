@@ -103,7 +103,7 @@ In the tab bar at the top of your lab screen, **click** the **Node1 Web** tab an
 
 [NOTE]
 ====
-If the Node1 or Node2 web tabs show a blank page or a previous result, refresh the tab to load the updated content.
+You may need to refresh the Node1 and Node2 web tabs to load the updated content.
 ====
 
 ---
