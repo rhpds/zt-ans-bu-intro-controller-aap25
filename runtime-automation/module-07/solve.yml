@@ -1,0 +1,53 @@
+---
+# solve.yml -- Module 07 (Creating a Second Project)
+# Creates: Additional playbooks project from Git, waits for sync to complete.
+
+- name: Log solve start
+  ansible.builtin.shell: echo "Solving module-07" >> /tmp/progress.log
+
+- name: Get Default organization ID
+  ansible.builtin.uri:
+    url: "{{ aap_host }}/api/controller/v2/organizations/?name=Default"
+    user: "{{ aap_username }}"
+    password: "{{ aap_password }}"
+    force_basic_auth: true
+    validate_certs: false
+  register: r_org
+
+- name: Check if Additional playbooks project exists
+  ansible.builtin.uri:
+    url: "{{ aap_host }}/api/controller/v2/projects/?name=Additional+playbooks"
+    user: "{{ aap_username }}"
+    password: "{{ aap_password }}"
+    force_basic_auth: true
+    validate_certs: false
+  register: r_project_check
+
+- name: Create Additional playbooks project
+  ansible.builtin.uri:
+    url: "{{ aap_host }}/api/controller/v2/projects/"
+    method: POST
+    user: "{{ aap_username }}"
+    password: "{{ aap_password }}"
+    force_basic_auth: true
+    validate_certs: false
+    body_format: json
+    body:
+      name: "Additional playbooks"
+      organization: "{{ r_org.json.results[0].id | int }}"
+      scm_type: "git"
+      scm_url: "https://github.com/ansible-tmm/instruqt-wyfp-additional.git"
+    status_code: [200, 201]
+  when: r_project_check.json.count == 0
+
+- name: Wait for project sync to complete
+  ansible.builtin.uri:
+    url: "{{ aap_host }}/api/controller/v2/projects/?name=Additional+playbooks"
+    user: "{{ aap_username }}"
+    password: "{{ aap_password }}"
+    force_basic_auth: true
+    validate_certs: false
+  register: r_project_status
+  until: r_project_status.json.results[0].status in ['successful', 'failed']
+  retries: 30
+  delay: 10
