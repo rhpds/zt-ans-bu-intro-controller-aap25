@@ -90,11 +90,13 @@ chown -R rhel:rhel /home/rhel/ansible /home/rhel/ansible-files
 chmod 777 /home/rhel/ansible
 
 # Controller as Code (CaC) setup
-# Use ansible bundled with AAP installation; install extra collections alongside it
-AAP_COLLECTIONS=/root/ansible-automation-platform-containerized-setup/collections/ansible_collections
-
-ansible-galaxy collection install infra.aap_configuration:==4.7.0 -p "$AAP_COLLECTIONS"
+# Create venv with ansible-core 2.16.x (matches ee-supported-rhel9)
+# CaC files are copied to /tmp/controller-as-code/ by setup-automation/main.yml
+dnf install -y python3-pip python3.11 python3.11-pip
+python3.11 -m venv /tmp/cac-venv
+/tmp/cac-venv/bin/pip install --quiet --upgrade pip
+/tmp/cac-venv/bin/pip install --quiet "ansible-core~=2.16.0"
+/tmp/cac-venv/bin/ansible-galaxy collection install infra.aap_configuration:==4.7.0
 
 # Pre-create credentials so they exist before module-05
-# CaC files are copied to /tmp/controller-as-code/ by setup-automation/main.yml
-ANSIBLE_COLLECTIONS_PATH="$AAP_COLLECTIONS" ansible-playbook /tmp/controller-as-code/configure_controller_credentials.yml
+/tmp/cac-venv/bin/ansible-playbook /tmp/controller-as-code/configure_controller_credentials.yml

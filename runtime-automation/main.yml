@@ -9,8 +9,22 @@
     aap_host: "https://control-https"
     aap_username: "admin"
     aap_password: "ansible123!"
+    bastion_host: "{{ lookup('env', 'BASTION_HOST') }}"
+    bastion_port: "{{ lookup('env', 'BASTION_PORT') | default('22', true) }}"
+    bastion_user: "{{ lookup('env', 'BASTION_USER') }}"
+    bastion_pass: "{{ lookup('env', 'BASTION_PASSWORD') }}"
 
   tasks:
+    - name: Add bastion host for CaC delegation
+      ansible.builtin.add_host:
+        name: "{{ bastion_host }}"
+        ansible_ssh_host: "{{ bastion_host }}"
+        ansible_ssh_port: "{{ bastion_port }}"
+        ansible_ssh_user: "{{ bastion_user }}"
+        ansible_ssh_pass: "{{ bastion_pass }}"
+        ansible_become_password: "{{ bastion_pass }}"
+      when: bastion_host | length > 0
+
     - name: Load secrets
       ansible.builtin.include_vars: secrets.yaml
       ignore_errors: true
