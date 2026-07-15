@@ -199,10 +199,10 @@ image::badge-qr-code.png[QR code for Ansible Forum badge, opts="border"]
 
 If you don't have an Ansible Forum account yet, no worries! You can sign up using the same link. To keep it simple, you can register or log in with your Google or GitHub account, and an account will be created for you automatically.
 
-Once you sign up, remember to introduce yourself in link:https://forum.ansible.com/t/introduce-yourself-2025-edition/39892[this Forum topic]!
+Once you sign up, remember to introduce yourself in link:https://forum.ansible.com/t/introduce-yourself-2025-edition/39892[this Forum topic^]!
 
 ---
 
 == Troubleshooting
 
-If you have encountered an issue or have noticed something not quite right, please link:https://github.com/rhpds/zt-ans-bu-intro-controller-aap25/issues[open an issue on GitHub].
+If you have encountered an issue or have noticed something not quite right, please link:https://github.com/rhpds/zt-ans-bu-intro-controller-aap25/issues[open an issue on GitHub^].
