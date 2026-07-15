@@ -12,7 +12,7 @@ _A guide to creating a fourth Job Template for installing Apache, this time incl
 
 In this final challenge, you will explore one more powerful feature of Job Templates: **Surveys**. Surveys let you prompt users for input when launching a job, making it possible to customize parameters for each run — without editing the playbook itself.
 
-image::templates-view-example-templates[Job Templates list view in automation controller, opts="border"]
+image::templates-view-example-templates.png[Job Templates list view in automation controller, opts="border"]
 
 ---
 
