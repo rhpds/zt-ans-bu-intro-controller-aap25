@@ -43,8 +43,8 @@
     - name: Execute module_stage-host.sh if it exists
       when: r_script_test.stat.exists
       ansible.builtin.shell: >-
-        sh -x /tmp/runtime-scripts/{{ module_dir }}/{{ module_stage }}-{{ ansible_host }}.sh
-        > /tmp/runtime-scripts/{{ module_dir }}/{{ module_stage }}-{{ ansible_host }}.log 2>&1
+        sh /tmp/runtime-scripts/{{ module_dir }}/{{ module_stage }}-{{ ansible_host }}.sh
+        2>&1 | tee /tmp/runtime-scripts/{{ module_dir }}/{{ module_stage }}-{{ ansible_host }}.log
       become: true
       register: r_result
       changed_when: r_result.rc == 0
