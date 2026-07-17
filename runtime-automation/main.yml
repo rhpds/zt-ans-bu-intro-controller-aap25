@@ -47,7 +47,8 @@
         > /tmp/runtime-scripts/{{ module_dir }}/{{ module_stage }}-{{ ansible_host }}.log 2>&1
       become: true
       register: r_result
-      changed_when: r_result.rc == 0
+      changed_when: r_result == 0
+      ignore_errors: true
 
     - name: Write failure details for nookbag
       ansible.builtin.copy:
