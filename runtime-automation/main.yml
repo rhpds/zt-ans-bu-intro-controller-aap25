@@ -40,13 +40,14 @@
         dest: "/tmp/runtime-scripts/{{ module_dir }}/{{ module_stage }}-{{ ansible_host }}.sh"
         mode: "0755"
 
-    - name: Execute script
+    - name: Execute module_stage-host.sh if it exists
       when: r_script_test.stat.exists
       ansible.builtin.shell: >-
-        sh /tmp/runtime-scripts/{{ module_dir }}/{{ module_stage }}-{{ ansible_host }}.sh
+        sh -x /tmp/runtime-scripts/{{ module_dir }}/{{ module_stage }}-{{ ansible_host }}.sh
+        > /tmp/runtime-scripts/{{ module_dir }}/{{ module_stage }}-{{ ansible_host }}.log 2>&1
       become: true
       register: r_result
-      ignore_errors: true
+      changed_when: r_result.rc == 0
 
     - name: Write failure details for nookbag
       ansible.builtin.copy:
