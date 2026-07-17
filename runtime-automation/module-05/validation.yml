@@ -1,6 +1,0 @@
----
-# validation.yml -- Module 05 (Understanding Credentials)
-# Observation-only module -- no tasks to validate, just log progress.
-
-- name: Log validation start
-  ansible.builtin.shell: echo "Validating module-05" >> /tmp/progress.log

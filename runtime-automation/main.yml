@@ -1,33 +1,69 @@
 ---
-- name: Run module stage
+- name: Create inventory
   hosts: localhost
-  connection: local
   gather_facts: false
+  tasks:
+    - name: Add bastion host
+      ansible.builtin.add_host:
+        name: "{{ lookup('ansible.builtin.env', 'BASTION_HOST') }}"
+        ansible_ssh_host: "{{ lookup('ansible.builtin.env', 'BASTION_HOST') }}"
+        ansible_ssh_port: "{{ lookup('ansible.builtin.env', 'BASTION_PORT') }}"
+        ansible_ssh_user: "{{ lookup('ansible.builtin.env', 'BASTION_USER') }}"
+        ansible_ssh_pass: "{{ lookup('ansible.builtin.env', 'BASTION_PASSWORD') }}"
 
-  vars:
-    _module_dir: "{{ module_dir | default(module_directory | default('')) }}"
-    aap_host: "https://control-https"
-    aap_username: "admin"
-    aap_password: "ansible123!"
-    bastion_host: "{{ lookup('env', 'BASTION_HOST') }}"
-    bastion_port: "{{ lookup('env', 'BASTION_PORT') | default('22', true) }}"
-    bastion_user: "{{ lookup('env', 'BASTION_USER') }}"
-    bastion_pass: "{{ lookup('env', 'BASTION_PASSWORD') }}"
+- name: Run module stage on control node
+  hosts: all:!localhost
+  gather_facts: false
+  become: false
 
   tasks:
-    - name: Add bastion host for CaC delegation
-      ansible.builtin.add_host:
-        name: "{{ bastion_host }}"
-        ansible_ssh_host: "{{ bastion_host }}"
-        ansible_ssh_port: "{{ bastion_port }}"
-        ansible_ssh_user: "{{ bastion_user }}"
-        ansible_ssh_pass: "{{ bastion_pass }}"
-        ansible_become_password: "{{ bastion_pass }}"
-      when: bastion_host | length > 0
+    - name: Set config_host variable with ansible_host value
+      ansible.builtin.set_fact:
+        config_host: "{{ ansible_host }}"
 
-    - name: Load secrets
-      ansible.builtin.include_vars: secrets.yaml
+    - name: Create a directory if it does not exist
+      ansible.builtin.file:
+        path: "/tmp/runtime-scripts/{{ module_dir }}"
+        state: directory
+        mode: "0755"
+
+    - name: Check if script exists
+      ansible.builtin.stat:
+        path: "./{{ module_dir }}/{{ module_stage }}-{{ config_host }}.sh"
+      delegate_to: localhost
+      register: r_script_test
+
+    - name: Copy script file
+      when: r_script_test.stat.exists
+      ansible.builtin.copy:
+        src: "./{{ module_dir }}/{{ module_stage }}-{{ ansible_host }}.sh"
+        dest: "/tmp/runtime-scripts/{{ module_dir }}/{{ module_stage }}-{{ ansible_host }}.sh"
+        mode: "0755"
+
+    - name: Execute script
+      when: r_script_test.stat.exists
+      ansible.builtin.shell: >-
+        sh /tmp/runtime-scripts/{{ module_dir }}/{{ module_stage }}-{{ ansible_host }}.sh
+      become: true
+      register: r_result
       ignore_errors: true
 
-    - name: Include module tasks
-      ansible.builtin.include_tasks: "{{ _module_dir }}/{{ module_stage }}.yml"
+    - name: Write failure details for nookbag
+      ansible.builtin.copy:
+        content: "{{ r_result.stdout | default('') }}"
+        dest: "{{ job_info_dir }}/validation_failure.out"
+        mode: "0644"
+      delegate_to: localhost
+      when:
+        - r_script_test.stat.exists
+        - job_info_dir is defined
+        - r_result.rc is defined
+        - r_result.rc != 0
+
+    - name: Fail if stage failed
+      ansible.builtin.fail:
+        msg: "{{ r_result.stdout | default('Stage failed') }}"
+      when:
+        - r_script_test.stat.exists
+        - r_result.rc is defined
+        - r_result.rc != 0
