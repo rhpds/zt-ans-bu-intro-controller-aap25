@@ -132,7 +132,8 @@ controller_templates:
     become_enabled: true
     playbook: apache_template.yml
     project: Apache playbooks
-    credential: lab-credentials
+    credentials:
+      - lab-credentials
     survey_enabled: true
     survey_spec:
       name: Apache Survey

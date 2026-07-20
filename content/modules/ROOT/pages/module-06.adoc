@@ -127,7 +127,8 @@ controller_templates:
     become_enabled: true
     playbook: apache.yml
     project: Apache playbooks
-    credential: lab-credentials
+    credentials:
+      - lab-credentials
 ----
 
 Notice how each field maps directly to what you entered in the UI form. The CaC approach makes it easy to review, version-control, and reproduce this configuration.
