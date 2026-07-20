@@ -1,12 +1,12 @@
 #!/bin/sh
-echo "Validating module-09 via Controller module" >> /tmp/progress.log
+echo "Validating module-09 via Controller as Code" >> /tmp/progress.log
 
 CAC_DIR="/tmp/controller-as-code"
 CAC_VENV="/tmp/cac-venv/bin"
 
-# Use state=exists instead of CaC --check
-# (CaC --check always reports changed for workflow node relationships)
-OUTPUT=$("${CAC_VENV}/ansible-playbook" "${CAC_DIR}/configure_controller_validate_workflow.yml" 2>&1)
+# CaC --check always reports changed for workflow node relationships,
+# so only check for failed or unreachable.
+OUTPUT=$("${CAC_VENV}/ansible-playbook" "${CAC_DIR}/configure_controller_staged.yml" -e module=module-09 --check 2>&1)
 RC=$?
 
 if [ $RC -ne 0 ] || echo "$OUTPUT" | grep -qE "failed=[1-9][0-9]*|unreachable=[1-9][0-9]*"; then
