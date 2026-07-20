@@ -130,6 +130,10 @@ python3.11 -m venv /tmp/cac-venv
 /tmp/cac-venv/bin/pip install --quiet --upgrade pip
 /tmp/cac-venv/bin/pip install --quiet "ansible-core~=2.16.0"
 /tmp/cac-venv/bin/ansible-galaxy collection install git+https://github.com/ansible/ansible.platform.git,v2.7.20260630
+# ansible.controller is required by infra.aap_configuration.
+# Copy from the AAP installation so the venv can resolve the dependency.
+cp -r /root/ansible-automation-platform-containerized-setup/collections/ansible_collections/ansible/controller \
+  /root/.ansible/collections/ansible_collections/ansible/
 /tmp/cac-venv/bin/ansible-galaxy collection install infra.aap_configuration:==4.6.0
 
 # Pre-create credentials so they exist before module-05
