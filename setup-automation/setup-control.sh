@@ -125,12 +125,18 @@ chmod 777 /home/rhel/ansible
 # Controller as Code (CaC) setup
 # Create venv with ansible-core 2.16.x (matches ee-supported-rhel9)
 # CaC files are copied to /tmp/controller-as-code/ by setup-automation/main.yml
-dnf install -y python3-pip python3.11 python3.11-pip
+retry "dnf install -y python3-pip python3.11 python3.11-pip" "Installing Python 3.11"
 python3.11 -m venv /tmp/cac-venv
 /tmp/cac-venv/bin/pip install --quiet --upgrade pip
 /tmp/cac-venv/bin/pip install --quiet "ansible-core~=2.16.0"
 /tmp/cac-venv/bin/ansible-galaxy collection install git+https://github.com/ansible/ansible.platform.git,2.5.20251114
 /tmp/cac-venv/bin/ansible-galaxy collection install infra.aap_configuration:==4.6.0
+# /tmp/cac-venv/bin/ansible-galaxy collection install infra.aap_configuration:==4.6.0 --force --no-deps
+/tmp/cac-venv/bin/ansible-galaxy collection install awx.awx
+
+# ansible.controller is not on Galaxy, copy from AAP installation bundle
+cp -r /root/ansible-automation-platform-containerized-setup/collections/ansible_collections/ansible/controller \
+  /root/.ansible/collections/ansible_collections/ansible/controller 2>/dev/null || true
 
 # Pre-create credentials so they exist before module-05
 /tmp/cac-venv/bin/ansible-playbook /tmp/controller-as-code/configure_controller_credentials.yml
