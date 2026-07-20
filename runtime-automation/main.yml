@@ -64,6 +64,7 @@
         - job_info_dir is defined
         - r_result.rc is defined
         - r_result.rc != 0
+        - module_stage == "validation"
 
     - name: Fail if stage failed
       ansible.builtin.fail:
