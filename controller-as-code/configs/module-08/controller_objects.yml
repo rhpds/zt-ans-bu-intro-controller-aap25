@@ -21,7 +21,8 @@ controller_templates:
     become_enabled: true
     playbook: extended_services.yml
     project: Additional playbooks
-    credential: lab-credentials
+    credentials:
+      - lab-credentials
 
   - name: Set motd
     organization: Default
@@ -30,4 +31,5 @@ controller_templates:
     become_enabled: true
     playbook: motd_facts.yml
     project: Additional playbooks
-    credential: lab-credentials
+    credentials:
+      - lab-credentials
