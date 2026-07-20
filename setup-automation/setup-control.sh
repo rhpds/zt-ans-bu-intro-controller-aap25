@@ -129,7 +129,7 @@ retry "dnf install -y python3-pip python3.11 python3.11-pip" "Installing Python 
 python3.11 -m venv /tmp/cac-venv
 /tmp/cac-venv/bin/pip install --quiet --upgrade pip
 /tmp/cac-venv/bin/pip install --quiet "ansible-core~=2.16.0"
-/tmp/cac-venv/bin/ansible-galaxy collection install git+https://github.com/ansible/ansible.platform.git,2.5.20251114
+/tmp/cac-venv/bin/ansible-galaxy collection install git+https://github.com/ansible/ansible.platform.git,v2.7.20260630
 /tmp/cac-venv/bin/ansible-galaxy collection install infra.aap_configuration:==4.6.0
 
 # Pre-create credentials so they exist before module-05
