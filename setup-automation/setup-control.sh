@@ -120,7 +120,7 @@ control
 EOF
 
 chown -R rhel:rhel /home/rhel/ansible /home/rhel/ansible-files
-chmod 777 /home/rhel/ansible
+chmod 755 /home/rhel/ansible
 
 # Controller as Code (CaC) setup
 # Create venv with ansible-core 2.16.x (matches ee-supported-rhel9)
