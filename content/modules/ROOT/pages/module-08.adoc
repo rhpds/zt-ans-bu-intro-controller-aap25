@@ -12,7 +12,7 @@ _A guide to creating a second and third Job Template to run different playbooks 
 
 In this challenge, you will put your experience to work by creating two more **Job Templates**. Unlike the first one, these templates use playbooks from the `Additional playbooks` project and target different hosts and groups — including one that doesn't exist yet in your inventory. You will also troubleshoot a common issue: what happens when a playbook expects a host that isn't defined.
 
-image::job-templates-home-with-example-job-template.png[Job Templates list view in automation controller, opts="border"]
+image::templates-view-example-templates.png[Job Templates list view in automation controller, opts="border"]
 
 ---
 
@@ -164,7 +164,8 @@ controller_templates:
     become_enabled: true
     playbook: extended_services.yml
     project: Additional playbooks
-    credential: lab-credentials
+    credentials:
+      - lab-credentials
 
   - name: Set motd
     organization: Default
@@ -173,7 +174,8 @@ controller_templates:
     become_enabled: true
     playbook: motd_facts.yml
     project: Additional playbooks
-    credential: lab-credentials
+    credentials:
+      - lab-credentials
 ----
 
 With CaC, the `node3` host and `database` group are created **before** the `Extended services` job template, so the failure you experienced in the UI exercise would never occur.
@@ -186,4 +188,4 @@ Press the blue **Next** button below to proceed to the next challenge.
 
 == Troubleshooting
 
-If you have encountered an issue or have noticed something not quite right, please link:https://github.com/rhpds/zt-ans-bu-intro-controller-aap25/issues[open an issue on GitHub].
+If you have encountered an issue or have noticed something not quite right, please link:https://github.com/rhpds/zt-ans-bu-intro-controller-aap25/issues[open an issue on GitHub^].

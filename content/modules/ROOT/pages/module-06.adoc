@@ -12,7 +12,7 @@ _A guide to running a playbook with the automation controller by creating and la
 
 In the automation controller, **job templates** are a visual representation of the `ansible-playbook` command and all the flags you can use when executing from the command line. They are the primary mechanism for running your Ansible Playbooks.
 
-image::job-templates-home-with-example-job-template.png[Job Templates list view in automation controller, opts="border"]
+image::templates-view-example-templates.png[Job Templates list view in automation controller, opts="border"]
 
 ---
 
@@ -101,6 +101,11 @@ In the tab bar at the top of your lab screen, **click** the **Node1 Web** tab an
 +
 **Click** the **Node2 Web** tab and verify you see the same "Hello World" message.
 
+[NOTE]
+====
+You may need to refresh the Node1 and Node2 web tabs to load the updated content.
+====
+
 ---
 
 == Controller as Code Alternative
@@ -122,7 +127,8 @@ controller_templates:
     become_enabled: true
     playbook: apache.yml
     project: Apache playbooks
-    credential: lab-credentials
+    credentials:
+      - lab-credentials
 ----
 
 Notice how each field maps directly to what you entered in the UI form. The CaC approach makes it easy to review, version-control, and reproduce this configuration.
@@ -135,4 +141,4 @@ Press the blue **Next** button below to proceed to the next challenge.
 
 == Troubleshooting
 
-If you have encountered an issue or have noticed something not quite right, please link:https://github.com/rhpds/zt-ans-bu-intro-controller-aap25/issues[open an issue on GitHub].
+If you have encountered an issue or have noticed something not quite right, please link:https://github.com/rhpds/zt-ans-bu-intro-controller-aap25/issues[open an issue on GitHub^].

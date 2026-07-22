@@ -11,17 +11,12 @@
         ansible_ssh_user: "{{ lookup('ansible.builtin.env', 'BASTION_USER') }}"
         ansible_ssh_pass: "{{ lookup('ansible.builtin.env', 'BASTION_PASSWORD') }}"
 
-- name: Demo Playbook for the ansible-runner API
+- name: Run module stage on control node
   hosts: all:!localhost
   gather_facts: false
   become: false
 
   tasks:
-    - name: Simple debug task
-      ansible.builtin.debug:
-        msg: "Hello Runner"
-        verbosity: 1
-
     - name: Set config_host variable with ansible_host value
       ansible.builtin.set_fact:
         config_host: "{{ ansible_host }}"
@@ -32,7 +27,7 @@
         state: directory
         mode: "0755"
 
-    - name: Check if /module_dir/module_stage-host.sh exists
+    - name: Check if script exists
       ansible.builtin.stat:
         path: "./{{ module_dir }}/{{ module_stage }}-{{ config_host }}.sh"
       delegate_to: localhost
@@ -44,38 +39,37 @@
         src: "./{{ module_dir }}/{{ module_stage }}-{{ ansible_host }}.sh"
         dest: "/tmp/runtime-scripts/{{ module_dir }}/{{ module_stage }}-{{ ansible_host }}.sh"
         mode: "0755"
-      register: r_result
 
     - name: Execute module_stage-host.sh if it exists
       when: r_script_test.stat.exists
       ansible.builtin.shell: >-
-        sh -x /tmp/runtime-scripts/{{ module_dir }}/{{ module_stage }}-{{ ansible_host }}.sh
-        > /tmp/runtime-scripts/{{ module_dir }}/{{ module_stage }}-{{ ansible_host }}.log 2>&1
+        set -o pipefail &&
+        sh /tmp/runtime-scripts/{{ module_dir }}/{{ module_stage }}-{{ ansible_host }}.sh
+        2>&1 | tee /tmp/runtime-scripts/{{ module_dir }}/{{ module_stage }}-{{ ansible_host }}.log
+      args:
+        executable: /bin/bash
       become: true
       register: r_result
       changed_when: r_result.rc == 0
+      ignore_errors: true
 
-    - name: Output script result
-      ansible.builtin.debug:
-        msg: "{{ r_result.stdout | default('') }}"
-        verbosity: 1
-      when: r_script_test.stat.exists
-
-    - name: Write script result to file
+    - name: Write failure details for nookbag
       ansible.builtin.copy:
         content: "{{ r_result.stdout | default('') }}"
-        dest: "{{ job_info_dir }}/script.out"
+        dest: "{{ job_info_dir }}/validation_failure.out"
         mode: "0644"
       delegate_to: localhost
-      when: r_script_test.stat.exists and job_info_dir is defined
+      when:
+        - r_script_test.stat.exists
+        - job_info_dir is defined
+        - r_result.rc is defined
+        - r_result.rc != 0
+        - module_stage == "validation"
 
-    - name: Output script result
-      ansible.builtin.debug:
-        var: r_result
-        verbosity: 1
-      when: r_script_test.stat.exists and job_info_dir is defined
-
-    - name: Fail if stage was failed
+    - name: Fail if stage failed
       ansible.builtin.fail:
-        msg: "Stage failed"
-      when: r_script_test.stat.exists and r_result.rc != 0
+        msg: "{{ r_result.stdout | default('Stage failed') }}"
+      when:
+        - r_script_test.stat.exists
+        - r_result.rc is defined
+        - r_result.rc != 0

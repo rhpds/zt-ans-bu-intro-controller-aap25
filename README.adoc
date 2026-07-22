@@ -1,4 +1,4 @@
-= Introduction to Ansible Automation Controller 2.5
+= Introduction to Ansible Automation Controller 2.7
 
 A hands-on workshop for the https://demo.redhat.com[Red Hat Demo Platform (RHDP)] teaching core Automation Controller features through 10 progressive modules.
 
@@ -65,7 +65,7 @@ The lab has three automation layers:
 
 Defined in `config/`:
 
-* **control** — AAP 2.5 (`base-zero-aap-2.5-container-ce`, 16G RAM, 4 cores)
+* **control** — AAP 2.7 (`aap-27-base-ceh`, 32G RAM, 4 cores)
 * **node1, node2, node3** — RHEL 9.5 managed hosts (2G RAM, 2 cores each)
 * **gitea** — Git server container hosting playbook repositories
 

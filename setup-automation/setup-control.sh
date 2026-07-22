@@ -1,66 +1,80 @@
 #!/bin/bash
 
+retry() {
+    for i in {1..3}; do
+        echo "Attempt $i: $2"
+        if $1; then
+            return 0
+        fi
+        [ $i -lt 3 ] && sleep 5
+    done
+    echo "Failed after 3 attempts: $2"
+    exit 1
+}
+
+# AWS images disable RHSM repo management since they use RHUI.
+# Re-enable it so Satellite registration creates proper repo files.
+sed -i 's/^manage_repos.*=.*0/manage_repos = 1/' /etc/rhsm/rhsm.conf
+
 # Register with Satellite for RHEL repos (clean stale certs from base image)
-subscription-manager clean
+retry "subscription-manager clean" "Cleaning subscription manager"
 curl -k -L https://${SATELLITE_URL}/pub/katello-server-ca.crt -o /etc/pki/ca-trust/source/anchors/${SATELLITE_URL}.ca.crt
-update-ca-trust
-rpm -Uhv https://${SATELLITE_URL}/pub/katello-ca-consumer-latest.noarch.rpm
-subscription-manager register --org=${SATELLITE_ORG} --activationkey=${SATELLITE_ACTIVATIONKEY}
+retry "update-ca-trust" "Updating CA trust"
+
+KATELLO_INSTALLED=$(rpm -qa | grep -c katello)
+if [ "$KATELLO_INSTALLED" -eq 0 ]; then
+    rpm -Uhv https://${SATELLITE_URL}/pub/katello-ca-consumer-latest.noarch.rpm
+fi
+
+subscription-manager status
+if [ $? -ne 0 ]; then
+    subscription-manager register --org=${SATELLITE_ORG} --activationkey=${SATELLITE_ACTIVATIONKEY}
+fi
+
+# Disable broken AWS RHUI repos and amazon-id plugin
+dnf config-manager --set-disabled '*rhui*' 2>/dev/null || true
+if [ -f /etc/dnf/plugins/amazon-id.conf ]; then
+    sed -i 's/enabled.*=.*1/enabled=0/' /etc/dnf/plugins/amazon-id.conf
+fi
+
+# Enable RHEL 9 repos from Satellite
+subscription-manager repos --enable=rhel-9-for-x86_64-baseos-rpms --enable=rhel-9-for-x86_64-appstream-rpms
 
 systemctl stop systemd-tmpfiles-setup.service
 systemctl disable systemd-tmpfiles-setup.service
 
-
-nmcli connection add type ethernet con-name enp2s0 ifname enp2s0 ipv4.addresses 192.168.1.10/24 ipv4.method manual connection.autoconnect yes
-nmcli connection up enp2s0
 echo "192.168.1.10 control.lab control controller" >> /etc/hosts
 
 echo "%rhel ALL=(ALL:ALL) NOPASSWD:ALL" > /etc/sudoers.d/rhel_sudoers
 chmod 440 /etc/sudoers.d/rhel_sudoers
-echo "Checking SSH keys for rhel user..."
 
-RHEL_SSH_DIR="/home/rhel/.ssh"
-RHEL_PRIVATE_KEY="$RHEL_SSH_DIR/id_rsa"
-RHEL_PUBLIC_KEY="$RHEL_SSH_DIR/id_rsa.pub"
-
+# SSH keys for rhel user
+RHEL_PRIVATE_KEY="/home/rhel/.ssh/id_rsa"
 if [ -f "$RHEL_PRIVATE_KEY" ]; then
-    echo "SSH key already exists for rhel user: $RHEL_PRIVATE_KEY"
+    echo "SSH key already exists for rhel user"
 else
     echo "Creating SSH key for rhel user..."
     sudo -u rhel mkdir -p /home/rhel/.ssh
     sudo -u rhel chmod 700 /home/rhel/.ssh
     sudo -u rhel ssh-keygen -t rsa -b 4096 -m PEM -C "rhel@$(hostname)" -f /home/rhel/.ssh/id_rsa -N "" -q
     sudo -u rhel chmod 600 /home/rhel/.ssh/id_rsa*
-    
-    if [ -f "$RHEL_PRIVATE_KEY" ]; then
-        echo "SSH key created successfully for rhel user"
-    else
-        echo "Error: Failed to create SSH key for rhel user"
-    fi
 fi
 
-# ## ansible home
-mkdir /home/$USER/ansible
-## ansible-files dir
-mkdir /home/$USER/ansible-files
+# Ansible directories and config for rhel user
+mkdir -p /home/rhel/ansible /home/rhel/ansible-files
 
-# ## ansible.cfg
-echo "[defaults]" > /home/$USER/.ansible.cfg
-echo "inventory = /home/$USER/ansible-files/hosts" >> /home/$USER/.ansible.cfg
-echo "host_key_checking = False" >> /home/$USER/.ansible.cfg
+cat > /home/rhel/.ansible.cfg << 'EOF'
+[defaults]
+inventory = /home/rhel/ansible-files/hosts
+host_key_checking = False
+EOF
 
-# ## git setup
-git config --global user.email "rhel@example.com"
-git config --global user.name "Red Hat"
-su - $USER -c 'git config --global user.email "rhel@example.com"'
-su - $USER -c 'git config --global user.name "Red Hat"'
+# git setup
+su - rhel -c 'git config --global user.email "rhel@example.com"'
+su - rhel -c 'git config --global user.name "Red Hat"'
 
-
-# ## set ansible-navigator default settings
-# ## for the EE to work we need to pass env variables
-# ## TODO: controller_host doesnt resolve with control and 127.0.0.1
-# ## is interpreted within the EE
-su - $USER -c 'cat >/home/$USER/ansible-navigator.yml <<EOL
+# ansible-navigator settings
+cat > /home/rhel/ansible-navigator.yml << 'EOF'
 ---
 ansible-navigator:
   ansible:
@@ -72,7 +86,7 @@ ansible-navigator:
     container-options:
       - "--net=host"
     enabled: true
-    image: registry.redhat.io/ansible-automation-platform-25/ee-supported-rhel9
+    image: registry.redhat.io/ansible-automation-platform-27/ee-supported-rhel9
     pull:
       policy: missing
     environment-variables:
@@ -87,16 +101,13 @@ ansible-navigator:
   mode: stdout
   playbook-artifact:
     save-as: /home/rhel/{playbook_name}-artifact-{time_stamp}.json
-EOL
-'
+EOF
 
-# ## copy navigator settings
-su - $USER -c 'cp /home/$USER/ansible-navigator.yml /home/$USER/.ansible-navigator.yml'
-su - $USER -c 'cp /home/$USER/ansible-navigator.yml /home/$USER/ansible-files/ansible-navigator.yml'
+cp /home/rhel/ansible-navigator.yml /home/rhel/.ansible-navigator.yml
+cp /home/rhel/ansible-navigator.yml /home/rhel/ansible-files/ansible-navigator.yml
 
-
-# ## set inventory hosts for commandline ansible
-su - $USER -c 'cat >/home/$USER/ansible-files/hosts <<EOL
+# Inventory hosts file
+cat > /home/rhel/ansible-files/hosts << 'EOF'
 [web]
 node1
 node2
@@ -106,25 +117,23 @@ node3
 
 [controller]
 control
+EOF
 
-EOL
-cat /home/$USER/ansible-files/hosts'
-## end inventory hosts
+chown -R rhel:rhel /home/rhel/ansible /home/rhel/ansible-files
+chmod 755 /home/rhel/ansible
 
-# ## chown and chmod all files in rhel user home
-chown -R rhel:rhel /home/rhel/ansible
-chmod 777 /home/rhel/ansible
-#touch /home/rhel/ansible-files/hosts
-chown -R rhel:rhel /home/rhel/ansible-files
-
-# ## Controller as Code (CaC) setup
-# Create venv with ansible-core 2.16.z (matches ee-supported-rhel9)
+# Controller as Code (CaC) setup
+# Create venv with ansible-core 2.16.x (matches ee-supported-rhel9)
 # CaC files are copied to /tmp/controller-as-code/ by setup-automation/main.yml
-dnf install -y python3-pip python3.11 python3.11-pip
+retry "dnf install -y python3-pip python3.11 python3.11-pip" "Installing Python 3.11"
 python3.11 -m venv /tmp/cac-venv
 /tmp/cac-venv/bin/pip install --quiet --upgrade pip
 /tmp/cac-venv/bin/pip install --quiet "ansible-core~=2.16.0"
-/tmp/cac-venv/bin/ansible-galaxy collection install git+https://github.com/ansible/ansible.platform.git,2.5.20251114
+/tmp/cac-venv/bin/ansible-galaxy collection install git+https://github.com/ansible/ansible.platform.git,v2.7.20260630
+# ansible.controller is required by infra.aap_configuration.
+# Copy from the AAP installation so the venv can resolve the dependency.
+cp -r /root/ansible-automation-platform-containerized-setup/collections/ansible_collections/ansible/controller \
+  /root/.ansible/collections/ansible_collections/ansible/
 /tmp/cac-venv/bin/ansible-galaxy collection install infra.aap_configuration:==4.6.0
 
 # Pre-create credentials so they exist before module-05

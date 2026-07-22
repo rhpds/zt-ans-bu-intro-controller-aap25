@@ -46,7 +46,7 @@ Here is a preview of the exercises ahead. Each challenge builds on the previous 
 
 == Controller as Code (CaC) Introduction
 
-Throughout this workshop, you will create automation controller objects (inventories, projects, credentials, job templates, and workflows) using the web UI. However, in production environments, these same objects can be managed **declaratively as code** using the link:https://github.com/redhat-cop/infra.aap_configuration[infra.aap_configuration] collection.
+Throughout this workshop, you will create automation controller objects (inventories, projects, credentials, job templates, and workflows) using the web UI. However, in production environments, these same objects can be managed **declaratively as code** using the link:https://github.com/redhat-cop/infra.aap_configuration[infra.aap_configuration^] collection.
 
 This approach, known as **Controller as Code (CaC)**, allows you to:
 
@@ -61,4 +61,4 @@ At the end of each challenge, you will find a *Controller as Code Alternative* s
 
 == Troubleshooting
 
-If you encounter an issue, please notify the lab facilitator for assistance or link:https://github.com/rhpds/zt-ans-bu-intro-controller-aap25/issues[open an issue on GitHub].
+If you encounter an issue, please notify the lab facilitator for assistance or link:https://github.com/rhpds/zt-ans-bu-intro-controller-aap25/issues[open an issue on GitHub^].

@@ -12,7 +12,7 @@ _A guide to connecting all the dots by linking multiple playbooks with condition
 
 So far, each Job Template runs a single playbook independently. A **Workflow Job Template** lets you connect multiple Job Templates into a single automated pipeline — with conditional logic, parallel execution, and error handling built in.
 
-image::wf-templates-home-with-example-wf-template.png[Workflow Job Templates list view, opts="border"]
+image::wf-template-example-list.png[Workflow Job Templates list view, opts="border"]
 
 ---
 
@@ -71,7 +71,7 @@ After saving, you will be taken to the Workflow Visualizer, where you can build 
 
 . **Add the first step.**
 +
-**Click** the **Start** button to add the first node.
+**Click** the **Add step** button to add the first node.
 
 . **Configure the first node.**
 +
@@ -92,7 +92,7 @@ Next, you will add a second step that runs only if the first step is successful.
 
 . **Add a new linked step.**
 +
-**Hover** over the `apache101` node, **click** the **+** icon, and select **Add node**.
+**Hover** over the `apache101` node, **click** the kebab menu, and select **Add step and link**.
 
 . **Configure the second node.**
 +
@@ -114,7 +114,7 @@ Now, add a third step that also runs after the first step, in parallel with the 
 
 . **Add another linked step from the first node.**
 +
-**Hover** over the `apache101` node again, **click** the **+** icon, and select **Add node**.
+**Hover** over the `apache101` node, **click** the kebab menu, and select **Add step and link**.
 
 . **Configure the third node.**
 +
@@ -194,4 +194,4 @@ Press the blue **Next** button below to proceed to the next challenge.
 
 == Troubleshooting
 
-If you have encountered an issue or have noticed something not quite right, please link:https://github.com/rhpds/zt-ans-bu-intro-controller-aap25/issues[open an issue on GitHub].
+If you have encountered an issue or have noticed something not quite right, please link:https://github.com/rhpds/zt-ans-bu-intro-controller-aap25/issues[open an issue on GitHub^].
